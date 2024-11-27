@@ -1,7 +1,7 @@
 class TypingTest {
     constructor() {
         this.words = [
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I", "it", "for", "not", "on", "with", 
+            "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with", 
             "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", 
             "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", 
             "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "him", 
@@ -98,38 +98,35 @@ class TypingTest {
     }
 
     handleKeyDown(e) {
-        // Only prevent typing if modal is open
+        // Handle instant restart with Escape key
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            this.restartTest(true);
+            return;
+        }
+
+        // Prevent typing if modal is open
         if (this.isModalOpen) {
-            // Only allow Tab key for accessibility
-            if (e.key === 'Tab') {
-                return;
-            }
             e.preventDefault();
             return;
         }
 
-        // Handle restart shortcut
-        if (e.key === 'Tab') {
+        // Handle backspace
+        if (e.key === 'Backspace') {
             e.preventDefault();
-            if (e.shiftKey) {
-                this.restartTest();
-                return;
-            }
+            this.handleBackspace();
+            return;
         }
 
-        // Rest of the typing logic
-        if (!e.ctrlKey && !e.altKey && !e.metaKey) {
-            if (e.key === 'Backspace') {
-                this.handleBackspace();
-                return;
-            }
+        // Ignore if modifier keys are pressed
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
 
-            if (e.key.length === 1) {
-                if (!this.isTestActive) {
-                    this.startTest();
-                }
-                this.processCharacter(e.key);
+        // Only process single characters
+        if (e.key.length === 1) {
+            if (!this.isTestActive) {
+                this.startTest();
             }
+            this.processCharacter(e.key);
         }
     }
 
@@ -228,9 +225,19 @@ class TypingTest {
         // Calculate accuracy
         this.accuracy = Math.round((this.correctChars / this.totalChars) * 100) || 0;
 
-        // Update display
-        this.wpmDisplay.textContent = this.wpm;
-        this.accuracyDisplay.textContent = `${this.accuracy}%`;
+        // Add animation class when numbers update
+        const animate = (element, newValue) => {
+            const oldValue = element.textContent;
+            if (oldValue !== newValue.toString()) {
+                element.classList.add('changed');
+                setTimeout(() => element.classList.remove('changed'), 300);
+            }
+            element.textContent = newValue;
+        };
+
+        animate(this.wpmDisplay, this.wpm);
+        animate(this.accuracyDisplay, `${this.accuracy}%`);
+        animate(this.timeDisplay, `${timeLeft}s`);
     }
 
     updateTime() {
