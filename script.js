@@ -1,16 +1,6 @@
 class TypingTest {
     constructor() {
         this.words = [
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "i",
-            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
-            "say", "this", "but", "his", "by", "from", "they", "we", "say", "her",
-            "she", "or", "an", "will", "my", "one", "all", "would", "there", "their",
-            "what", "so", "up", "out", "if", "about", "who", "get", "which", "go",
-            "me", "when", "make", "can", "like", "time", "no", "just", "him", "know",
-            "take", "people", "into", "year", "your", "good", "some", "could", "them", "see",
-            "other", "than", "then", "now", "look", "only", "come", "its", "over", "think",
-            "also", "back", "after", "use", "two", "how", "our", "work", "first", "well",
-            "way", "even", "new", "want", "because", "any", "these", "give", "day", "most",
             "us", "time", "day", "year", "now", "month", "week", "hour", "minute", "second",
             "morning", "evening", "night", "today", "tomorrow", "yesterday", "soon", "later", "early", "late",
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
@@ -49,6 +39,7 @@ class TypingTest {
             "try", "call", "ask", "seem", "feel", "become", "leave", "put", "mean", "keep",
             "each", "well", "just", "while", "where", "why", "who", "whose", "which", "what",
             "when", "then", "there", "here", "those", "these", "that", "this", "they", "them"
+            // Add more words to reach 1000 if needed
         ];
         
         this.textDisplay = document.getElementById('text-display');
@@ -67,12 +58,7 @@ class TypingTest {
         this.isTestActive = false;
         this.timer = null;
 
-        this.displayedWords = [];
-        this.nextWords = [];
-        this.wordIndex = 0;
-        this.lineCount = 5;
-        this.charsPerLine = 60;
-
+        this.currentText = '';
         this.initializeEventListeners();
         this.generateInitialText();
     }
@@ -92,13 +78,6 @@ class TypingTest {
                 return;
             }
 
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if (this.isTestActive) {
-                    this.checkCharacter(' ');
-                }
-            }
-
             if (!this.isTestActive && e.key.length === 1) {
                 this.startTest();
             }
@@ -107,7 +86,7 @@ class TypingTest {
         document.addEventListener('keypress', (e) => {
             if (!this.isTestActive) return;
             
-            if (e.key.length === 1 && e.key !== ' ') {
+            if (e.key.length === 1) {
                 this.checkCharacter(e.key);
             }
         });
@@ -120,9 +99,7 @@ class TypingTest {
     }
 
     generateInitialText() {
-        this.displayedWords = this.generateWords(30); // Generate more words initially
-        this.nextWords = this.generateWords(15);
-        this.currentText = this.displayedWords.join(' ');
+        this.currentText = this.generateWords(100).join(' ');
         this.renderText();
     }
 
@@ -131,42 +108,25 @@ class TypingTest {
     }
 
     renderText() {
-        let displayText = "";
-        let currentLine = 0;
-        let currentLineChars = 0;
-
-        const allWords = [...this.displayedWords, ...this.nextWords];
-        
-        for (let i = this.wordIndex; i < allWords.length && currentLine < this.lineCount; i++) {
-            const word = allWords[i];
-            if (currentLineChars + word.length + 1 > this.charsPerLine) {
-                displayText += "\n";
-                currentLine++;
-                currentLineChars = 0;
+        this.textDisplay.innerHTML = this.currentText.split('').map((char, index) => {
+            let classes = ['char'];
+            if (index < this.currentIndex) {
+                if (this.mistakes.has(index)) {
+                    classes.push('incorrect');
+                } else {
+                    classes.push('correct');
+                }
+            } else if (index === this.currentIndex) {
+                classes.push('active');
             }
-            if (currentLine < this.lineCount) {
-                displayText += word + " ";
-                currentLineChars += word.length + 1;
-            }
-        }
-
-        this.textDisplay.innerHTML = displayText.split('').map((char, index) => 
-            `<span class="char ${index === this.currentIndex ? 'active' : ''}">${char}</span>`
-        ).join('');
+            return `<span class="${classes.join(' ')}">${char}</span>`;
+        }).join('');
     }
 
     handleBackspace() {
         if (this.currentIndex > 0) {
             this.currentIndex--;
-            const charElements = this.textDisplay.querySelectorAll('.char');
             
-            charElements[this.currentIndex].classList.remove('correct', 'incorrect');
-            charElements[this.currentIndex].classList.add('active');
-            
-            if (charElements[this.currentIndex + 1]) {
-                charElements[this.currentIndex + 1].classList.remove('active');
-            }
-
             if (this.mistakes.has(this.currentIndex)) {
                 this.mistakes.delete(this.currentIndex);
             } else {
@@ -174,6 +134,7 @@ class TypingTest {
             }
             this.totalChars--;
             
+            this.renderText();
             this.updateStats();
         }
     }
@@ -182,46 +143,22 @@ class TypingTest {
         if (!this.isTestActive) return;
         
         const currentChar = this.currentText[this.currentIndex];
-        const charElements = this.textDisplay.querySelectorAll('.char');
-        
-        charElements[this.currentIndex].classList.remove('active');
         
         if (key === currentChar) {
-            charElements[this.currentIndex].classList.add('correct');
             this.correctChars++;
         } else {
-            charElements[this.currentIndex].classList.add('incorrect');
             this.mistakes.add(this.currentIndex);
         }
 
         this.currentIndex++;
         this.totalChars++;
 
-        // Check if we need to shift text
-        if (this.currentIndex >= this.charsPerLine) {
-            this.shiftText();
+        if (this.currentIndex >= this.currentText.length - 50) { // Buffer of 50 characters
+            this.currentText += ' ' + this.generateWords(20).join(' ');
         }
 
-        if (this.currentIndex < charElements.length) {
-            charElements[this.currentIndex].classList.add('active');
-        }
-
+        this.renderText();
         this.updateStats();
-    }
-
-    shiftText() {
-        const wordsToRemove = this.displayedWords.findIndex(word => 
-            this.currentText.indexOf(word, this.currentIndex) !== -1
-        );
-        
-        if (wordsToRemove > 0) {
-            this.displayedWords = this.displayedWords.slice(wordsToRemove);
-            this.displayedWords = [...this.displayedWords, ...this.nextWords.slice(0, wordsToRemove)];
-            this.nextWords = [...this.nextWords.slice(wordsToRemove), ...this.generateWords(wordsToRemove)];
-            this.currentText = this.displayedWords.join(' ') + ' ' + this.nextWords.join(' ');
-            this.currentIndex -= this.charsPerLine;
-            this.renderText();
-        }
     }
 
     startTest() {
