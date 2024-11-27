@@ -97,9 +97,86 @@
 
     <script>
         const words = [
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I",
-            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
-            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she"
+            // Most common words
+            "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", 
+            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", 
+            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
+            
+            // Common verbs
+            "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
+            "so", "up", "out", "if", "about", "who", "get", "which", "go", "me",
+            
+            // Time-related
+            "when", "make", "can", "like", "time", "no", "just", "him", "know", "take",
+            "year", "day", "month", "morning", "night", "moment", "minute", "hour", "week", "now",
+            
+            // People and relationships
+            "people", "family", "friend", "father", "mother", "sister", "brother", "wife", "husband", "child",
+            "baby", "man", "woman", "girl", "boy", "parent", "kid", "teacher", "student", "person",
+            
+            // Actions and states
+            "work", "sleep", "eat", "drink", "walk", "run", "talk", "think", "feel", "see",
+            "hear", "look", "watch", "move", "stop", "start", "follow", "help", "turn", "play",
+            
+            // Common nouns
+            "house", "home", "room", "office", "car", "book", "table", "chair", "door", "window",
+            "bed", "kitchen", "bathroom", "phone", "computer", "food", "water", "money", "paper", "bag",
+            
+            // Abstract concepts
+            "life", "love", "time", "world", "way", "thing", "idea", "fact", "problem", "question",
+            "answer", "truth", "lie", "hope", "fear", "dream", "mind", "heart", "soul", "spirit",
+            
+            // Descriptive words
+            "good", "bad", "big", "small", "high", "low", "long", "short", "old", "new",
+            "young", "happy", "sad", "angry", "tired", "busy", "free", "hard", "soft", "strong",
+            
+            // Business and work
+            "business", "company", "work", "job", "office", "meeting", "project", "team", "client", "market",
+            "money", "price", "cost", "value", "quality", "service", "product", "industry", "economy", "trade",
+            
+            // Technology
+            "computer", "internet", "email", "website", "software", "program", "data", "system", "network", "device",
+            "phone", "mobile", "digital", "technology", "online", "web", "app", "video", "audio", "file",
+            
+            // Education
+            "school", "college", "university", "class", "course", "study", "student", "teacher", "lesson", "exam",
+            "test", "grade", "education", "knowledge", "learning", "training", "skill", "practice", "theory", "research",
+            
+            // Health and body
+            "health", "body", "head", "face", "eye", "ear", "nose", "mouth", "hand", "foot",
+            "heart", "brain", "blood", "pain", "doctor", "hospital", "medicine", "disease", "treatment", "care",
+            
+            // Places
+            "city", "town", "country", "state", "street", "road", "building", "house", "store", "shop",
+            "restaurant", "hotel", "airport", "station", "park", "garden", "beach", "mountain", "river", "sea",
+            
+            // Nature and environment
+            "water", "air", "fire", "earth", "sun", "moon", "star", "sky", "weather", "rain",
+            "snow", "wind", "tree", "flower", "plant", "animal", "bird", "fish", "dog", "cat",
+            
+            // Food and drink
+            "food", "drink", "meal", "breakfast", "lunch", "dinner", "meat", "fish", "vegetable", "fruit",
+            "bread", "rice", "coffee", "tea", "milk", "water", "juice", "wine", "beer", "sugar",
+            
+            // Clothing
+            "clothes", "shirt", "pants", "dress", "shoe", "hat", "coat", "jacket", "suit", "uniform",
+            "sock", "glove", "belt", "button", "zipper", "pocket", "fabric", "cotton", "wool", "leather",
+            
+            // Transportation
+            "car", "bus", "train", "plane", "bike", "boat", "ship", "truck", "vehicle", "traffic",
+            "driver", "passenger", "ticket", "trip", "travel", "journey", "route", "map", "direction", "distance",
+            
+            // Communication
+            "word", "language", "speech", "voice", "message", "call", "text", "letter", "email", "phone",
+            "talk", "speak", "tell", "ask", "answer", "write", "read", "listen", "understand", "mean",
+            
+            // Entertainment
+            "music", "movie", "game", "sport", "play", "dance", "song", "show", "party", "fun",
+            "art", "book", "story", "picture", "photo", "video", "radio", "television", "news", "media",
+            
+            // Emotions
+            "happy", "sad", "angry", "scared", "worried", "excited", "surprised", "tired", "bored", "interested",
+            "proud", "ashamed", "jealous", "grateful", "guilty", "lonely", "comfortable", "confident", "nervous", "calm"
         ];
 
         let currentText = "";
