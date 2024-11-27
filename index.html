@@ -12,18 +12,17 @@
             <h1>TypeShit</h1>
         </div>
         <div class="header">
-            <button id="restart">Restart</button>
-            <div class="stats">
-                <div class="stat">WPM: <span id="wpm">0</span></div>
-                <div class="stat">Accuracy: <span id="accuracy">0%</span></div>
-                <div class="stat">Time: <span id="time">30s</span></div>
-            </div>
             <select id="timeSelect">
                 <option value="10">10s</option>
                 <option value="15">15s</option>
                 <option value="30" selected>30s</option>
                 <option value="60">60s</option>
             </select>
+            <div class="stats">
+                <div class="stat">WPM: <span id="wpm">0</span></div>
+                <div class="stat">Accuracy: <span id="accuracy">0%</span></div>
+                <div class="stat">Time: <span id="time">30s</span></div>
+            </div>
             <select id="themeSelect">
                 <option value="dark">Dark</option>
                 <option value="synthwave">Synthwave</option>
@@ -38,6 +37,9 @@
         </div>
         <div class="typing-area" tabindex="-1">
             <div id="text-display"></div>
+        </div>
+        <div class="restart-container">
+            <button id="restart">Restart</button>
         </div>
     </div>
 

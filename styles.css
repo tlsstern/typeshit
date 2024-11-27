@@ -41,8 +41,8 @@ body {
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto auto auto;
     align-items: center;
     margin-bottom: 20px;
     padding: 10px;
@@ -60,10 +60,15 @@ body {
 .stats {
     display: flex;
     gap: 20px;
+    justify-content: center;
 }
 
-.stat {
-    font-size: 1.2rem;
+#timeSelect {
+    justify-self: start;
+}
+
+#themeSelect {
+    justify-self: end;
 }
 
 select, button {
@@ -113,13 +118,13 @@ select:hover, button:hover {
 
 .char.correct {
     color: #fff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
     opacity: 1;
 }
 
 .char.incorrect {
     color: var(--incorrect-color);
-    text-shadow: 0 0 5px rgba(244, 67, 54, 0.8);
+    text-shadow: 0 0 3px rgba(244, 67, 54, 0.4);
     opacity: 1;
 }
 
@@ -234,4 +239,15 @@ select:hover, button:hover {
 #playAgainBtn:hover {
     background-color: var(--button-hover-bg);
     transform: translateY(-2px);
+}
+
+/* Add new styles for restart button container */
+.restart-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#restart {
+    min-width: 120px; /* Give the button a consistent width */
 } 
