@@ -466,143 +466,152 @@ class TypingTest {
     }
 
     showResultsModal() {
-        const timeElapsed = this.timeLimit / 60; // Convert seconds to minutes
-        const wpm = Math.round((this.correctChars / 5) / timeElapsed);
-        const accuracy = this.totalChars > 0 
-            ? Math.round((this.correctChars / this.totalChars) * 100) 
-            : 0;
+        // Add hide class to container for smooth transition
+        document.querySelector('.container').classList.add('hide');
+        
+        // Wait for container transition before showing modal
+        setTimeout(() => {
+            const timeElapsed = this.timeLimit / 60; // Convert seconds to minutes
+            const wpm = Math.round((this.correctChars / 5) / timeElapsed);
+            const accuracy = this.totalChars > 0 
+                ? Math.round((this.correctChars / this.totalChars) * 100) 
+                : 0;
 
-        // Update display
-        this.wpmResult.textContent = wpm;
-        this.accuracyResult.textContent = `${accuracy}%`;
-        this.totalCharsResult.textContent = this.totalChars;
-        this.correctCharsResult.textContent = this.correctChars;
-        this.incorrectCharsResult.textContent = this.totalChars - this.correctChars;
+            // Update display
+            this.wpmResult.textContent = wpm;
+            this.accuracyResult.textContent = `${accuracy}%`;
+            this.totalCharsResult.textContent = this.totalChars;
+            this.correctCharsResult.textContent = this.correctChars;
+            this.incorrectCharsResult.textContent = this.totalChars - this.correctChars;
 
-        // Clear any existing chart
-        const existingChart = Chart.getChart("accuracyGraph");
-        if (existingChart) {
-            existingChart.destroy();
-        }
+            // Clear any existing chart
+            const existingChart = Chart.getChart("accuracyGraph");
+            if (existingChart) {
+                existingChart.destroy();
+            }
 
-        // Prepare data for the graph
-        const labels = [];
-        const data = [];
-        const totalTime = this.timeLimit;
+            // Prepare data for the graph
+            const labels = [];
+            const data = [];
+            const totalTime = this.timeLimit;
 
-        // Create time points from 10% to 100%
-        for (let i = 1; i <= 10; i++) {
-            const timePoint = (i / 10) * totalTime;
-            labels.push(i * 10 + '%');
-            
-            // Find the closest WPM data point for this time
-            const closestPoint = this.wpmHistory.reduce((closest, point) => {
-                if (Math.abs(point.time - timePoint) < Math.abs(closest.time - timePoint)) {
-                    return point;
-                }
-                return closest;
-            }, this.wpmHistory[0] || { time: 0, wpm: 0 });
-            
-            data.push(closestPoint ? closestPoint.wpm : 0);
-        }
-
-        // Create accuracy graph
-        const ctx = document.getElementById('accuracyGraph').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'WPM over time',
-                    data: data,
-                    borderColor: getComputedStyle(document.documentElement)
-                        .getPropertyValue('--correct-color'),
-                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: getComputedStyle(document.documentElement)
-                        .getPropertyValue('--correct-color'),
-                    pointBorderColor: 'transparent',
-                    pointHoverRadius: 6,
-                    pointRadius: 4,
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: 'WPM over time',
-                        color: getComputedStyle(document.documentElement)
-                            .getPropertyValue('--text-color'),
-                        font: {
-                            size: 16,
-                            family: 'Arial, sans-serif',
-                            weight: '500'
-                        },
-                        padding: {
-                            top: 10,
-                            bottom: 20
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: getComputedStyle(document.documentElement)
-                            .getPropertyValue('--header-bg'),
-                        titleColor: getComputedStyle(document.documentElement)
-                            .getPropertyValue('--text-color'),
-                        bodyColor: getComputedStyle(document.documentElement)
-                            .getPropertyValue('--text-color'),
-                        padding: 12,
-                        cornerRadius: 8
+            // Create time points from 10% to 100%
+            for (let i = 1; i <= 10; i++) {
+                const timePoint = (i / 10) * totalTime;
+                labels.push(i * 10 + '%');
+                
+                // Find the closest WPM data point for this time
+                const closestPoint = this.wpmHistory.reduce((closest, point) => {
+                    if (Math.abs(point.time - timePoint) < Math.abs(closest.time - timePoint)) {
+                        return point;
                     }
+                    return closest;
+                }, this.wpmHistory[0] || { time: 0, wpm: 0 });
+                
+                data.push(closestPoint ? closestPoint.wpm : 0);
+            }
+
+            // Create accuracy graph
+            const ctx = document.getElementById('accuracyGraph').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'WPM over time',
+                        data: data,
+                        borderColor: getComputedStyle(document.documentElement)
+                            .getPropertyValue('--correct-color'),
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: getComputedStyle(document.documentElement)
+                            .getPropertyValue('--correct-color'),
+                        pointBorderColor: 'transparent',
+                        pointHoverRadius: 6,
+                        pointRadius: 4,
+                        borderWidth: 3
+                    }]
                 },
-                scales: {
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
-                            drawBorder: false
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
                         },
-                        ticks: {
+                        title: {
+                            display: true,
+                            text: 'WPM over time',
                             color: getComputedStyle(document.documentElement)
-                                .getPropertyValue('--char-color')
+                                .getPropertyValue('--text-color'),
+                            font: {
+                                size: 16,
+                                family: 'Arial, sans-serif',
+                                weight: '500'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--header-bg'),
+                            titleColor: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--text-color'),
+                            bodyColor: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--text-color'),
+                            padding: 12,
+                            cornerRadius: 8
                         }
                     },
-                    y: {
-                        min: 0,
-                        max: 400,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
-                            drawBorder: false
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: getComputedStyle(document.documentElement)
+                                    .getPropertyValue('--char-color')
+                            }
                         },
-                        ticks: {
-                            color: getComputedStyle(document.documentElement)
-                                .getPropertyValue('--char-color'),
-                            stepSize: 50,
-                            callback: function(value) {
-                                return value + ' WPM';
+                        y: {
+                            min: 0,
+                            max: 400,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: getComputedStyle(document.documentElement)
+                                    .getPropertyValue('--char-color'),
+                                stepSize: 50,
+                                callback: function(value) {
+                                    return value + ' WPM';
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        // Show modal with animation
-        this.resultsModal.style.display = 'flex';
-        void this.resultsModal.offsetWidth;
-        this.resultsModal.classList.add('show');
+            // Show modal with animation
+            this.resultsModal.style.display = 'flex';
+            void this.resultsModal.offsetWidth;
+            this.resultsModal.classList.add('show');
+        }, 300);
     }
 
     closeResultsModal() {
         this.resultsModal.classList.remove('show');
+        
+        // Wait for modal transition before showing container
         setTimeout(() => {
             this.resultsModal.style.display = 'none';
-        }, 300); // Match this delay with the transition duration
+            document.querySelector('.container').classList.remove('hide');
+        }, 400);
     }
 
     restartTest() {
