@@ -546,7 +546,7 @@ class TypingTest {
                         },
                         title: {
                             display: true,
-                            text: 'WPM over time',
+                            text: 'WPM',
                             color: getComputedStyle(document.documentElement)
                                 .getPropertyValue('--text-color'),
                             font: {
