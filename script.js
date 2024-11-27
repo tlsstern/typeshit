@@ -231,6 +231,7 @@ class TypingTest {
         // Add this new property to store WPM data points
         this.wpmHistory = [];
         this.lastWpmUpdate = null;
+        this.lastWord = '';
     }
 
     initializeEventListeners() {
@@ -321,7 +322,17 @@ class TypingTest {
     }
 
     generateWords(count) {
-        return Array.from({length: count}, () => this.words[Math.floor(Math.random() * this.words.length)]);
+        const words = [];
+        for (let i = 0; i < count; i++) {
+            let newWord;
+            do {
+                newWord = this.words[Math.floor(Math.random() * this.words.length)];
+            } while (newWord === this.lastWord);
+            
+            words.push(newWord);
+            this.lastWord = newWord;
+        }
+        return words;
     }
 
     renderText() {
