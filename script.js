@@ -69,7 +69,6 @@ class TypingTest {
         this.linesPerView = 5;
         this.charsPerLine = 60;
         this.visibleTextStart = 0;
-        this.currentLine = 0;
         this.statsTimer = null;
         this.themeSelect = document.getElementById('themeSelect');
         this.themes = {
@@ -180,6 +179,42 @@ class TypingTest {
                 '--cursor-color': '#e8ffe8',
                 '--button-bg': '#0f2417',
                 '--button-hover-bg': '#2d503a'
+            },
+            pastel: {
+                '--bg-color': '#f7f0f5',
+                '--text-color': '#333',
+                '--header-bg': '#e8dff1',
+                '--typing-area-bg': '#f0e6f6',
+                '--char-color': '#b39ddb',
+                '--correct-color': '#81c784',
+                '--incorrect-color': '#e57373',
+                '--cursor-color': '#333',
+                '--button-bg': '#d1c4e9',
+                '--button-hover-bg': '#b39ddb'
+            },
+            midnight: {
+                '--bg-color': '#2c3e50',
+                '--text-color': '#ecf0f1',
+                '--header-bg': '#34495e',
+                '--typing-area-bg': '#2c3e50',
+                '--char-color': '#95a5a6',
+                '--correct-color': '#1abc9c',
+                '--incorrect-color': '#e74c3c',
+                '--cursor-color': '#ecf0f1',
+                '--button-bg': '#34495e',
+                '--button-hover-bg': '#1abc9c'
+            },
+            vintage: {
+                '--bg-color': '#f5f5dc',
+                '--text-color': '#5d4037',
+                '--header-bg': '#d7ccc8',
+                '--typing-area-bg': '#f5f5dc',
+                '--char-color': '#8d6e63',
+                '--correct-color': '#6d4c41',
+                '--incorrect-color': '#d32f2f',
+                '--cursor-color': '#5d4037',
+                '--button-bg': '#bcaaa4',
+                '--button-hover-bg': '#8d6e63'
             }
         };
 

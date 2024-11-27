@@ -340,7 +340,40 @@ select:hover, button:hover {
 }
 
 #restart {
-    min-width: 120px; /* Give the button a consistent width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    width: 35px;
+    height: 35px;
+    background-color: transparent;
+    color: var(--char-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#restart:focus {
+    outline: none;
+}
+
+#restart .material-icons {
+    font-size: 20px;
+}
+
+#restart:hover .material-icons {
+    animation: rotateAndColor 0.5s ease forwards;
+}
+
+@keyframes rotateAndColor {
+    0% {
+        transform: rotate(0deg);
+        color: var(--char-color);
+    }
+    100% {
+        transform: rotate(360deg);
+        color: var(--text-color);
+    }
 }
 
 *:focus {
