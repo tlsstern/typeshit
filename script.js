@@ -511,6 +511,10 @@ class TypingTest {
                 data.push(closestPoint ? closestPoint.wpm : 0);
             }
 
+            // Find the maximum WPM achieved
+            const maxWPM = Math.max(...data, 0);  // Use 0 as fallback
+            const yAxisMax = maxWPM + 30;  // Change from 50 to 30
+
             // Create accuracy graph
             const ctx = document.getElementById('accuracyGraph').getContext('2d');
             new Chart(ctx, {
@@ -579,7 +583,7 @@ class TypingTest {
                         },
                         y: {
                             min: 0,
-                            max: 400,
+                            max: yAxisMax,  // Use dynamic maximum instead of fixed 400
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)',
                                 drawBorder: false
@@ -587,7 +591,7 @@ class TypingTest {
                             ticks: {
                                 color: getComputedStyle(document.documentElement)
                                     .getPropertyValue('--char-color'),
-                                stepSize: 50,
+                                stepSize: Math.ceil(yAxisMax / 8),  // Adjust step size based on max value
                                 callback: function(value) {
                                     return value + ' WPM';
                                 }
