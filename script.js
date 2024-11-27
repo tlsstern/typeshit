@@ -194,8 +194,12 @@ class TypingTest {
         }
 
         if (savedTheme) {
+            console.log(`Loading saved theme: ${savedTheme}`); // Debugging
             this.themeSelect.value = savedTheme;
             this.applyTheme(savedTheme); // Apply the saved theme
+        } else {
+            console.log('No saved theme found, applying default theme');
+            this.applyTheme('dark'); // Set default theme
         }
 
         // Update event listeners
@@ -208,6 +212,7 @@ class TypingTest {
 
         this.themeSelect.addEventListener('change', (e) => {
             const selectedTheme = e.target.value;
+            console.log(`Saving theme: ${selectedTheme}`); // Debugging
             localStorage.setItem('selectedTheme', selectedTheme);
             this.applyTheme(selectedTheme);
         });
@@ -217,7 +222,6 @@ class TypingTest {
 
         this.initializeEventListeners();
         this.generateInitialText();
-        this.applyTheme('dark'); // Set default theme
 
         this.playAgainBtn.addEventListener('click', () => {
             this.closeResultsModal();
@@ -491,10 +495,12 @@ class TypingTest {
     }
 
     applyTheme(theme) {
-        // Remove any existing theme classes
-        document.body.classList.remove(...document.body.classList);
-        // Add the new theme class
-        document.body.classList.add(theme);
+        const themeColors = this.themes[theme];
+        if (themeColors) {
+            Object.entries(themeColors).forEach(([property, value]) => {
+                document.documentElement.style.setProperty(property, value);
+            });
+        }
     }
 }
 
