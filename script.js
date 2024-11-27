@@ -36,22 +36,22 @@ class TypingTest {
         this.defaultTheme = 'cyber';
         this.defaultTime = 30;
 
-        // Initialize settings
+        // Initialize settings first
         this.initializeSettings();
         
-        // Start periodic checks
-        this.startSettingsCheck();
-
-        this.boundHandleKeyDown = this.handleKeyDown.bind(this);
-        this.isModalOpen = false;
-        this.initializeEventListeners();
-        this.generateNewText();
-        this.textDisplay.focus();
-
-        this.wordIndex = 0;
-        this.displayedWords = [];
-        this.nextWords = [];
+        // Generate initial text before setting up event listeners
         this.generateInitialText();
+        
+        // Setup event listeners
+        this.boundHandleKeyDown = this.handleKeyDown.bind(this);
+        document.addEventListener('keydown', this.boundHandleKeyDown);
+        this.initializeEventListeners();
+        
+        // Focus the text display
+        this.textDisplay.focus();
+        
+        // Setup styles immediately
+        this.setupStyles();
     }
 
     initializeEventListeners() {
@@ -422,6 +422,12 @@ class TypingTest {
         this.nextWords = this.generateWords(30);
         this.currentText = this.displayedWords.join(' ');
         this.renderText();
+        
+        // Ensure the first character is active
+        const chars = this.textDisplay.children;
+        if (chars[0]) {
+            chars[0].classList.add('active');
+        }
     }
 
     generateWords(count) {
@@ -436,32 +442,37 @@ class TypingTest {
         const allWords = [...this.displayedWords, ...this.nextWords];
         this.currentText = allWords.join(' ');
         
-        this.textDisplay.innerHTML = allWords.map(word => 
-            word.split('').map(char => 
-                `<span class="char">${char}</span>`
-            ).join('')
-        ).join('<span class="char"> </span>');
+        requestAnimationFrame(() => {
+            this.textDisplay.innerHTML = allWords.map(word => 
+                word.split('').map(char => 
+                    `<span class="char">${char}</span>`
+                ).join('')
+            ).join('<span class="char"> </span>');
 
-        // Maintain cursor position
-        const chars = this.textDisplay.children;
-        if (chars[this.currentIndex]) {
-            chars[this.currentIndex].classList.add('active');
-        }
+            // Set active class on first character
+            const chars = this.textDisplay.children;
+            if (chars[this.currentIndex]) {
+                chars[this.currentIndex].classList.add('active');
+            }
+        });
     }
 
-    // Add this CSS to handle word wrapping and scrolling
     setupStyles() {
+        // Apply these styles immediately to prevent layout shifts
         this.textDisplay.style.cssText = `
             overflow-y: hidden;
             white-space: pre-wrap;
             word-break: break-word;
+            min-height: 150px;
+            position: relative;
+            padding: 1rem;
+            line-height: 1.8;
+            font-size: 1.5rem;
         `;
     }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const typingTest = new TypingTest();
-    // Add initial keyboard listener
-    document.addEventListener('keydown', typingTest.boundHandleKeyDown);
+    new TypingTest();
 }); 
