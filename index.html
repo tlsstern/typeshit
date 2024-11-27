@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <style>
+        body {
+            background-color: #232323;
+            color: #e2b714;
+            font-family: 'Roboto Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        #text-display {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            text-align: left;
+            color: #646669;
+        }
+
+        .correct {
+            color: #e2b714;
+        }
+
+        .incorrect {
+            color: #ca4754;
+            text-decoration: underline;
+        }
+
+        #input-field {
+            width: 0;
+            height: 0;
+            opacity: 0;
+            position: absolute;
+        }
+
+        #stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            color: #646669;
+        }
+
+        .stat-box {
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.5rem;
+            background-color: #e2b714;
+            animation: blink 1s infinite;
+            position: relative;
+            top: 3px;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="text-display"></div>
+        <input type="text" id="input-field" autocomplete="off">
+        <div id="stats">
+            <div class="stat-box">
+                <div>WPM</div>
+                <div id="wpm">0</div>
+            </div>
+            <div class="stat-box">
+                <div>Accuracy</div>
+                <div id="accuracy">100%</div>
+            </div>
+            <div class="stat-box">
+                <div>Time</div>
+                <div id="time">60s</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const words = [
+            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I",
+            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
+            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she"
+        ];
+
+        let currentText = "";
+        let currentIndex = 0;
+        let startTime = null;
+        let timerInterval = null;
+        let correctChars = 0;
+        let totalChars = 0;
+        let timeLeft = 60;
+
+        const textDisplay = document.getElementById("text-display");
+        const inputField = document.getElementById("input-field");
+        const wpmDisplay = document.getElementById("wpm");
+        const accuracyDisplay = document.getElementById("accuracy");
+        const timeDisplay = document.getElementById("time");
+
+        function generateText() {
+            let text = "";
+            for (let i = 0; i < 30; i++) {
+                text += words[Math.floor(Math.random() * words.length)] + " ";
+            }
+            return text.trim();
+        }
+
+        function updateDisplay() {
+            let displayText = "";
+            for (let i = 0; i < currentText.length; i++) {
+                if (i === currentIndex) {
+                    displayText += '<span id="cursor"></span>';
+                }
+                if (i < currentIndex) {
+                    const correct = inputField.value[i] === currentText[i];
+                    displayText += `<span class="${correct ? 'correct' : 'incorrect'}">${currentText[i]}</span>`;
+                } else {
+                    displayText += currentText[i];
+                }
+            }
+            textDisplay.innerHTML = displayText;
+        }
+
+        function calculateWPM() {
+            const timeElapsed = (Date.now() - startTime) / 1000 / 60;
+            const wordsTyped = inputField.value.length / 5;
+            return Math.round(wordsTyped / timeElapsed);
+        }
+
+        function calculateAccuracy() {
+            return Math.round((correctChars / totalChars) * 100) || 100;
+        }
+
+        function startTest() {
+            currentText = generateText();
+            currentIndex = 0;
+            startTime = Date.now();
+            timeLeft = 60;
+            correctChars = 0;
+            totalChars = 0;
+            inputField.value = "";
+            updateDisplay();
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft + "s";
+                if (timeLeft <= 0) {
+                    endTest();
+                }
+            }, 1000);
+        }
+
+        function endTest() {
+            clearInterval(timerInterval);
+            inputField.blur();
+            alert(`Test complete!\nWPM: ${wpmDisplay.textContent}\nAccuracy: ${accuracyDisplay.textContent}`);
+            startTest();
+        }
+
+        inputField.addEventListener("input", () => {
+            if (!startTime) startTime = Date.now();
+
+            totalChars++;
+            if (inputField.value[currentIndex] === currentText[currentIndex]) {
+                correctChars++;
+            }
+
+            currentIndex = inputField.value.length;
+            updateDisplay();
+            wpmDisplay.textContent = calculateWPM();
+            accuracyDisplay.textContent = calculateAccuracy() + "%";
+
+            if (currentIndex === currentText.length) {
+                endTest();
+            }
+        });
+
+        document.addEventListener("click", () => {
+            inputField.focus();
+        });
+
+        startTest();
+    </script>
+</body>
+</html>
