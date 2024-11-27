@@ -59,6 +59,10 @@ class TypingTest {
         this.timer = null;
 
         this.currentText = '';
+        this.linesPerView = 5;
+        this.charsPerLine = 60;
+        this.visibleTextStart = 0;
+        this.currentLine = 0;
         this.initializeEventListeners();
         this.generateInitialText();
     }
@@ -108,17 +112,35 @@ class TypingTest {
     }
 
     renderText() {
-        this.textDisplay.innerHTML = this.currentText.split('').map((char, index) => {
+        const allChars = this.currentText.split('');
+        
+        // Calculate current line
+        this.currentLine = Math.floor(this.currentIndex / this.charsPerLine);
+        
+        // If we're past the first line, adjust visibleTextStart to keep cursor on second line
+        if (this.currentLine > 0) {
+            this.visibleTextStart = (this.currentLine - 1) * this.charsPerLine;
+        }
+        
+        const visibleChars = allChars.slice(
+            this.visibleTextStart, 
+            this.visibleTextStart + (this.linesPerView * this.charsPerLine)
+        );
+        
+        this.textDisplay.innerHTML = visibleChars.map((char, index) => {
+            const globalIndex = index + this.visibleTextStart;
             let classes = ['char'];
-            if (index < this.currentIndex) {
-                if (this.mistakes.has(index)) {
+            
+            if (globalIndex < this.currentIndex) {
+                if (this.mistakes.has(globalIndex)) {
                     classes.push('incorrect');
                 } else {
                     classes.push('correct');
                 }
-            } else if (index === this.currentIndex) {
+            } else if (globalIndex === this.currentIndex) {
                 classes.push('active');
             }
+            
             return `<span class="${classes.join(' ')}">${char}</span>`;
         }).join('');
     }
@@ -133,6 +155,12 @@ class TypingTest {
                 this.correctChars--;
             }
             this.totalChars--;
+            
+            // Update visibleTextStart when backspacing to previous lines
+            const newLine = Math.floor(this.currentIndex / this.charsPerLine);
+            if (newLine < this.currentLine && newLine > 0) {
+                this.visibleTextStart = (newLine - 1) * this.charsPerLine;
+            }
             
             this.renderText();
             this.updateStats();
@@ -153,7 +181,8 @@ class TypingTest {
         this.currentIndex++;
         this.totalChars++;
 
-        if (this.currentIndex >= this.currentText.length - 50) { // Buffer of 50 characters
+        // Add more text if needed
+        if (this.currentIndex >= this.currentText.length - (this.charsPerLine * 2)) {
             this.currentText += ' ' + this.generateWords(20).join(' ');
         }
 
