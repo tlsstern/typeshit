@@ -23,12 +23,31 @@
             text-align: center;
         }
 
+        .typing-box {
+            width: 650px;
+            height: 140px;
+            background-color: #2c2c2c;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
         #text-display {
             font-size: 1.5rem;
-            margin-bottom: 20px;
             line-height: 1.5;
             text-align: left;
             color: #646669;
+            position: relative;
+            transition: transform 0.2s ease;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .word {
+            display: inline-block;
+            margin-right: 8px;
         }
 
         .correct {
@@ -66,8 +85,8 @@
             height: 1.5rem;
             background-color: #e2b714;
             animation: blink 1s infinite;
-            position: relative;
-            top: 3px;
+            position: absolute;
+            transform: translateY(4px);
         }
 
         @keyframes blink {
@@ -77,7 +96,9 @@
 </head>
 <body>
     <div class="container">
-        <div id="text-display"></div>
+        <div class="typing-box">
+            <div id="text-display"></div>
+        </div>
         <input type="text" id="input-field" autocomplete="off">
         <div id="stats">
             <div class="stat-box">
@@ -90,7 +111,7 @@
             </div>
             <div class="stat-box">
                 <div>Time</div>
-                <div id="time">60s</div>
+                <div id="time">15s</div>
             </div>
         </div>
     </div>
@@ -108,7 +129,7 @@
         let timerInterval = null;
         let correctChars = 0;
         let totalChars = 0;
-        let timeLeft = 60;
+        let timeLeft = 15;
 
         const textDisplay = document.getElementById("text-display");
         const inputField = document.getElementById("input-field");
@@ -118,26 +139,56 @@
 
         function generateText() {
             let text = "";
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 50; i++) {
                 text += words[Math.floor(Math.random() * words.length)] + " ";
             }
             return text.trim();
         }
 
         function updateDisplay() {
-            let displayText = "";
-            for (let i = 0; i < currentText.length; i++) {
-                if (i === currentIndex) {
-                    displayText += '<span id="cursor"></span>';
-                }
-                if (i < currentIndex) {
-                    const correct = inputField.value[i] === currentText[i];
-                    displayText += `<span class="${correct ? 'correct' : 'incorrect'}">${currentText[i]}</span>`;
-                } else {
-                    displayText += currentText[i];
-                }
+            if (currentIndex > currentText.length - 20) {
+                currentText += " " + generateText();
             }
+
+            let displayText = "";
+            const words = currentText.split(" ");
+            let currentLine = 0;
+            let currentLineChars = 0;
+            const charsPerLine = 60; // Adjust this value to fit your box width
+
+            words.forEach((word, wordIndex) => {
+                const wordLength = word.length + 1; // +1 for space
+                if (currentLineChars + wordLength > charsPerLine) {
+                    displayText += "\n";
+                    currentLine++;
+                    currentLineChars = 0;
+                }
+
+                let wordDisplay = "";
+                for (let i = 0; i < word.length; i++) {
+                    const charIndex = displayText.length + i;
+                    if (charIndex === currentIndex) {
+                        wordDisplay += '<span id="cursor"></span>';
+                    }
+                    if (charIndex < currentIndex) {
+                        const correct = inputField.value[charIndex] === word[i];
+                        wordDisplay += `<span class="${correct ? 'correct' : 'incorrect'}">${word[i]}</span>`;
+                    } else {
+                        wordDisplay += word[i];
+                    }
+                }
+                
+                displayText += `<span class="word">${wordDisplay}</span>`;
+                currentLineChars += wordLength;
+            });
+
             textDisplay.innerHTML = displayText;
+
+            // Calculate line height and scroll text up accordingly
+            const lineHeight = 36; // Adjust based on your font size and line height
+            const currentLine = Math.floor(currentIndex / charsPerLine);
+            const scrollOffset = Math.max(0, (currentLine - 2) * lineHeight);
+            textDisplay.style.transform = `translateY(-${scrollOffset}px)`;
         }
 
         function calculateWPM() {
@@ -154,7 +205,7 @@
             currentText = generateText();
             currentIndex = 0;
             startTime = Date.now();
-            timeLeft = 60;
+            timeLeft = 15;
             correctChars = 0;
             totalChars = 0;
             inputField.value = "";
@@ -189,10 +240,6 @@
             updateDisplay();
             wpmDisplay.textContent = calculateWPM();
             accuracyDisplay.textContent = calculateAccuracy() + "%";
-
-            if (currentIndex === currentText.length) {
-                endTest();
-            }
         });
 
         document.addEventListener("click", () => {
