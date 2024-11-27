@@ -19,6 +19,7 @@
                 <div class="stat">Time: <span id="time">30s</span></div>
             </div>
             <select id="timeSelect">
+                <option value="10">10s</option>
                 <option value="15">15s</option>
                 <option value="30" selected>30s</option>
                 <option value="60">60s</option>
@@ -28,6 +29,19 @@
             <div id="text-display"></div>
         </div>
     </div>
+
+    <div id="resultsModal" class="modal">
+        <div class="modal-content">
+            <h2>Your Results</h2>
+            <p id="wpmResult"></p>
+            <p id="accuracyResult"></p>
+            <p id="totalCharsResult"></p>
+            <p id="correctCharsResult"></p>
+            <p id="incorrectCharsResult"></p>
+            <button id="playAgainBtn">Play Again</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

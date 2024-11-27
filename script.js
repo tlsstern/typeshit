@@ -48,6 +48,13 @@ class TypingTest {
         this.timeDisplay = document.getElementById('time');
         this.restartBtn = document.getElementById('restart');
         this.timeSelect = document.getElementById('timeSelect');
+        this.resultsModal = document.getElementById('resultsModal');
+        this.wpmResult = document.getElementById('wpmResult');
+        this.accuracyResult = document.getElementById('accuracyResult');
+        this.totalCharsResult = document.getElementById('totalCharsResult');
+        this.correctCharsResult = document.getElementById('correctCharsResult');
+        this.incorrectCharsResult = document.getElementById('incorrectCharsResult');
+        this.playAgainBtn = document.getElementById('playAgainBtn');
 
         this.currentIndex = 0;
         this.correctChars = 0;
@@ -63,14 +70,23 @@ class TypingTest {
         this.charsPerLine = 60;
         this.visibleTextStart = 0;
         this.currentLine = 0;
+        this.statsTimer = null;
         this.initializeEventListeners();
         this.generateInitialText();
+
+        this.playAgainBtn.addEventListener('click', () => {
+            this.closeResultsModal();
+            this.restartTest();
+        });
     }
 
     initializeEventListeners() {
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.restartTest();
+            if (this.resultsModal.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    this.closeResultsModal();
+                    this.restartTest();
+                }
                 return;
             }
 
@@ -88,6 +104,8 @@ class TypingTest {
         });
 
         document.addEventListener('keypress', (e) => {
+            if (this.resultsModal.style.display === 'flex') return;
+            
             if (!this.isTestActive) return;
             
             if (e.key.length === 1) {
@@ -168,7 +186,7 @@ class TypingTest {
     }
 
     checkCharacter(key) {
-        if (!this.isTestActive) return;
+        if (!this.isTestActive || this.resultsModal.style.display === 'flex') return;
         
         const currentChar = this.currentText[this.currentIndex];
         
@@ -194,6 +212,7 @@ class TypingTest {
         this.isTestActive = true;
         this.startTime = new Date();
         this.timer = setInterval(() => this.updateTime(), 1000);
+        this.statsTimer = setInterval(() => this.updateStats(), 100);
     }
 
     updateTime() {
@@ -222,13 +241,50 @@ class TypingTest {
 
     endTest() {
         clearInterval(this.timer);
+        clearInterval(this.statsTimer);
         this.isTestActive = false;
-        alert(`Test complete!\nWPM: ${this.wpmDisplay.textContent}\nAccuracy: ${this.accuracyDisplay.textContent}`);
-        this.restartTest();
+        this.showResultsModal();
+    }
+
+    showResultsModal() {
+        // Calculate final stats
+        const timeElapsed = this.timeLimit / 60; // Convert seconds to minutes
+        const wpm = Math.round((this.correctChars / 5) / timeElapsed);
+        const accuracy = this.totalChars > 0 
+            ? Math.round((this.correctChars / this.totalChars) * 100) 
+            : 0;
+        const totalChars = this.totalChars;
+        const correctChars = this.correctChars;
+        const incorrectChars = totalChars - correctChars;
+
+        // Update display
+        this.wpmResult.textContent = `WPM: ${wpm}`;
+        this.accuracyResult.textContent = `Accuracy: ${accuracy}%`;
+        this.totalCharsResult.textContent = `Total Characters: ${totalChars}`;
+        this.correctCharsResult.textContent = `Correct Characters: ${correctChars}`;
+        this.incorrectCharsResult.textContent = `Incorrect Characters: ${incorrectChars}`;
+        
+        // Update the header stats to match final results
+        this.wpmDisplay.textContent = wpm;
+        this.accuracyDisplay.textContent = accuracy + '%';
+        
+        this.resultsModal.style.display = 'flex';
+        // Trigger reflow
+        void this.resultsModal.offsetWidth;
+        this.resultsModal.classList.add('show');
+    }
+
+    closeResultsModal() {
+        this.resultsModal.classList.remove('show');
+        setTimeout(() => {
+            this.resultsModal.style.display = 'none';
+        }, 300); // Match this delay with the transition duration
     }
 
     restartTest() {
+        this.closeResultsModal();
         clearInterval(this.timer);
+        clearInterval(this.statsTimer);
         this.currentIndex = 0;
         this.correctChars = 0;
         this.totalChars = 0;
