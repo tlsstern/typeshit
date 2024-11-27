@@ -184,6 +184,37 @@ class TypingTest {
 
         this.typingArea = document.querySelector('.typing-area');
 
+        // Load saved preferences
+        const savedTime = localStorage.getItem('selectedTime');
+        const savedTheme = localStorage.getItem('selectedTheme');
+
+        if (savedTime) {
+            this.timeSelect.value = savedTime;
+            this.timeLimit = parseInt(savedTime); // Update timeLimit with saved value
+        }
+
+        if (savedTheme) {
+            this.themeSelect.value = savedTheme;
+            this.applyTheme(savedTheme); // Apply the saved theme
+        }
+
+        // Update event listeners
+        this.timeSelect.addEventListener('change', (e) => {
+            const selectedTime = e.target.value;
+            this.timeLimit = parseInt(selectedTime);
+            localStorage.setItem('selectedTime', selectedTime);
+            this.restartTest();
+        });
+
+        this.themeSelect.addEventListener('change', (e) => {
+            const selectedTheme = e.target.value;
+            localStorage.setItem('selectedTheme', selectedTheme);
+            this.applyTheme(selectedTheme);
+        });
+
+        // Initialize the time display with the correct time
+        this.timeDisplay.textContent = this.timeLimit + 's';
+
         this.initializeEventListeners();
         this.generateInitialText();
         this.applyTheme('dark'); // Set default theme
@@ -459,15 +490,15 @@ class TypingTest {
         this.generateInitialText();
     }
 
-    applyTheme(themeName) {
-        const theme = this.themes[themeName];
-        for (const [property, value] of Object.entries(theme)) {
-            document.documentElement.style.setProperty(property, value);
-        }
+    applyTheme(theme) {
+        // Remove any existing theme classes
+        document.body.classList.remove(...document.body.classList);
+        // Add the new theme class
+        document.body.classList.add(theme);
     }
 }
 
-// Initialize when DOM is loaded
+// Remove the separate DOM content loaded event listener for preferences
 document.addEventListener('DOMContentLoaded', () => {
     new TypingTest();
 }); 
