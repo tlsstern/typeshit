@@ -112,12 +112,12 @@ select:hover, button:hover {
 
 .char.correct {
     color: #fff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
 .char.incorrect {
     color: var(--incorrect-color);
-    text-shadow: 0 0 5px rgba(244, 67, 54, 0.8);
+    text-shadow: 0 0 3px rgba(244, 67, 54, 0.5);
 }
 
 .char.active::after {
