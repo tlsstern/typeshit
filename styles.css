@@ -198,12 +198,22 @@ h1 {
     transition: all 0.2s ease;
     border-radius: 2px;
     padding: 0 1px;
+    position: relative;
 }
 
 .char.active {
-    animation: blink 1s infinite;
+    background-color: transparent;
+}
+
+.char.active::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    width: 2px;
+    height: 100%;
     background-color: var(--primary-color);
-    opacity: 0.5;
+    animation: slideDown 0.2s ease;
 }
 
 .char.correct {
@@ -212,7 +222,22 @@ h1 {
 
 .char.incorrect {
     color: var(--error-color);
-    background-color: rgba(255, 0, 0, 0.2);
+    background-color: transparent;
+}
+
+/* Animation for the cursor line */
+@keyframes slideIn {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+/* Optional: Add hover effect for better visibility */
+#text-display:hover .char.active::before {
+    opacity: 0.8;
 }
 
 /* Tooltip styles */
@@ -237,10 +262,10 @@ h1 {
 }
 
 /* Animation for the cursor */
-@keyframes blink {
+/*@keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
-}
+}*/
 
 /* Updated button and select styles */
 button, select {

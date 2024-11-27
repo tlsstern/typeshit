@@ -35,34 +35,41 @@ class TypingTest {
         // Start periodic checks
         this.startSettingsCheck();
 
+        this.boundHandleKeyDown = this.handleKeyDown.bind(this);
+        this.isModalOpen = false;
         this.initializeEventListeners();
         this.generateNewText();
         this.textDisplay.focus();
     }
 
     initializeEventListeners() {
-        document.addEventListener('keydown', (e) => this.handleKeyDown(e));
-        this.restartBtn.addEventListener('click', () => this.restartTest());
+        this.restartBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.restartTest(true);
+        });
+        
         this.timeSelect.addEventListener('change', (e) => {
-            const newTime = parseInt(e.target.value);
-            this.timeLimit = newTime;
-            localStorage.setItem('time', newTime);
-            this.restartTest();
+            this.timeLimit = parseInt(e.target.value);
+            localStorage.setItem('time', this.timeLimit);
+            this.restartTest(true);
         });
+        
         this.themeSelect.addEventListener('change', (e) => {
-            const newTheme = e.target.value;
-            this.changeTheme(newTheme);
-        });
-
-        // Prevent losing focus
-        document.addEventListener('click', (e) => {
-            if (!e.target.matches('button, select')) {
-                this.textDisplay.focus();
-            }
+            this.changeTheme(e.target.value);
         });
     }
 
     handleKeyDown(e) {
+        // Only prevent typing if modal is open
+        if (this.isModalOpen) {
+            // Only allow Tab key for accessibility
+            if (e.key === 'Tab') {
+                return;
+            }
+            e.preventDefault();
+            return;
+        }
+
         // Handle restart shortcut
         if (e.key === 'Tab') {
             e.preventDefault();
@@ -72,22 +79,19 @@ class TypingTest {
             }
         }
 
-        // Handle backspace
-        if (e.key === 'Backspace') {
-            e.preventDefault();
-            this.handleBackspace();
-            return;
-        }
-
-        // Ignore if modifier keys are pressed
-        if (e.ctrlKey || e.altKey || e.metaKey) return;
-
-        // Only process single characters
-        if (e.key.length === 1) {
-            if (!this.isTestActive) {
-                this.startTest();
+        // Rest of the typing logic
+        if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+            if (e.key === 'Backspace') {
+                this.handleBackspace();
+                return;
             }
-            this.processCharacter(e.key);
+
+            if (e.key.length === 1) {
+                if (!this.isTestActive) {
+                    this.startTest();
+                }
+                this.processCharacter(e.key);
+            }
         }
     }
 
@@ -204,16 +208,17 @@ class TypingTest {
         clearInterval(this.timer);
         this.isTestActive = false;
         
-        // Calculate final statistics
-        const finalWPM = this.wpm;
-        const finalAccuracy = this.accuracy;
-        const correctWords = Math.floor(this.correctChars / 5);
-        
-        // Disable further typing
-        document.removeEventListener('keydown', this.handleKeyDown);
-        
-        // Show results modal
-        this.showResults(finalWPM, finalAccuracy, correctWords);
+        // Only show results if the test wasn't manually restarted
+        if (!this.isModalOpen) {
+            const finalWPM = this.wpm;
+            const finalAccuracy = this.accuracy;
+            const correctWords = Math.floor(this.correctChars / 5);
+            
+            document.removeEventListener('keydown', this.boundHandleKeyDown);
+            
+            this.isModalOpen = true;
+            this.showResults(finalWPM, finalAccuracy, correctWords);
+        }
     }
 
     showResults(wpm, accuracy, words) {
@@ -249,34 +254,51 @@ class TypingTest {
         // Add event listener to restart button
         const restartBtn = modal.querySelector('.restart-btn');
         restartBtn.addEventListener('click', () => {
-            document.body.removeChild(modal);
+            this.closeModal(modal);
             this.restartTest();
-            // Re-add keyboard listener
-            document.addEventListener('keydown', (e) => this.handleKeyDown(e));
         });
 
         // Add click outside to close
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                document.body.removeChild(modal);
+                this.closeModal(modal);
                 this.restartTest();
-                // Re-add keyboard listener
-                document.addEventListener('keydown', (e) => this.handleKeyDown(e));
             }
         });
     }
 
-    restartTest() {
-        clearInterval(this.timer);
+    closeModal(modal) {
+        document.body.removeChild(modal);
+        this.isModalOpen = false;
+        this.restartTest();
+    }
+
+    restartTest(isManualRestart = false) {
+        // Clear any existing timer
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+
+        this.isModalOpen = false;
         this.isTestActive = false;
         this.currentIndex = 0;
         this.correctChars = 0;
         this.totalChars = 0;
         this.startTime = null;
+        
+        // Reset displays
         this.wpmDisplay.textContent = '0';
         this.accuracyDisplay.textContent = '0%';
         this.timeDisplay.textContent = `${this.timeLimit}s`;
+        
+        // Generate new text
         this.generateNewText();
+
+        // Ensure keyboard listener is active
+        document.removeEventListener('keydown', this.boundHandleKeyDown);
+        document.addEventListener('keydown', this.boundHandleKeyDown);
+        
+        // Focus on the typing area
         this.textDisplay.focus();
     }
 
@@ -326,5 +348,7 @@ class TypingTest {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new TypingTest();
+    const typingTest = new TypingTest();
+    // Add initial keyboard listener
+    document.addEventListener('keydown', typingTest.boundHandleKeyDown);
 }); 
