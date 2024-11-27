@@ -3,54 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeShit</title>
+    <title>Typing Test</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <div class="taskbar">
-            <div class="taskbar-left">
-                <h1>Typing Test</h1>
+        <div class="header">
+            <select id="timeSelect">
+                <option value="15">15s</option>
+                <option value="30" selected>30s</option>
+                <option value="60">60s</option>
+            </select>
+            <div class="stats">
+                <div class="stat">WPM: <span id="wpm">0</span></div>
+                <div class="stat">Accuracy: <span id="accuracy">0%</span></div>
+                <div class="stat">Time: <span id="time">30s</span></div>
             </div>
-            <div class="taskbar-right">
-                <select id="timeSelect" title="Select time">
-                    <option value="10">10s</option>
-                    <option value="15">15s</option>
-                    <option value="30" selected>30s</option>
-                    <option value="60">60s</option>
-                    <option value="120">120s</option>
-                </select>
-                <select id="themeSelect" title="Select theme">
-                    <option value="cyber">Cyber</option>
-                    <option value="sunset">Sunset</option>
-                    <option value="nature">Nature</option>
-                    <option value="neon">Neon</option>
-                    <option value="pastel">Pastel</option>
-                </select>
-                <button id="restart" title="Press Esc to restart">
-                    <i class="fas fa-redo"></i>
-                </button>
-            </div>
+            <button id="restart">Restart</button>
         </div>
-
-        <div class="stats">
-            <div class="stat-item">
-                <span class="stat-label">WPM</span>
-                <span id="wpm">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">ACC</span>
-                <span id="accuracy">0%</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">TIME</span>
-                <span id="time">30s</span>
-            </div>
-        </div>
-
         <div class="typing-area">
-            <div id="text-display" tabindex="0"></div>
+            <div id="text-display"></div>
         </div>
     </div>
     <script src="script.js"></script>
