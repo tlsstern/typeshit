@@ -23,31 +23,12 @@
             text-align: center;
         }
 
-        .typing-box {
-            width: 650px;
-            height: 140px;
-            background-color: #2c2c2c;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
-        }
-
         #text-display {
             font-size: 1.5rem;
+            margin-bottom: 20px;
             line-height: 1.5;
             text-align: left;
             color: #646669;
-            position: relative;
-            transition: transform 0.2s ease;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .word {
-            display: inline-block;
-            margin-right: 8px;
         }
 
         .correct {
@@ -85,8 +66,8 @@
             height: 1.5rem;
             background-color: #e2b714;
             animation: blink 1s infinite;
-            position: absolute;
-            transform: translateY(4px);
+            position: relative;
+            top: 3px;
         }
 
         @keyframes blink {
@@ -96,9 +77,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="typing-box">
-            <div id="text-display"></div>
-        </div>
+        <div id="text-display"></div>
         <input type="text" id="input-field" autocomplete="off">
         <div id="stats">
             <div class="stat-box">
@@ -139,56 +118,38 @@
 
         function generateText() {
             let text = "";
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 30; i++) {
                 text += words[Math.floor(Math.random() * words.length)] + " ";
             }
             return text.trim();
         }
 
         function updateDisplay() {
+            let displayText = "";
             if (currentIndex > currentText.length - 20) {
                 currentText += " " + generateText();
             }
-
-            let displayText = "";
-            const words = currentText.split(" ");
-            let currentLine = 0;
-            let currentLineChars = 0;
-            const charsPerLine = 60; // Adjust this value to fit your box width
-
-            words.forEach((word, wordIndex) => {
-                const wordLength = word.length + 1; // +1 for space
-                if (currentLineChars + wordLength > charsPerLine) {
-                    displayText += "\n";
-                    currentLine++;
-                    currentLineChars = 0;
+            
+            const relevantText = currentText.substring(
+                Math.max(0, currentIndex - 30),
+                Math.min(currentText.length, currentIndex + 50)
+            );
+            
+            const offset = Math.max(0, currentIndex - 30);
+            
+            for (let i = 0; i < relevantText.length; i++) {
+                const absoluteIndex = i + offset;
+                if (absoluteIndex === currentIndex) {
+                    displayText += '<span id="cursor"></span>';
                 }
-
-                let wordDisplay = "";
-                for (let i = 0; i < word.length; i++) {
-                    const charIndex = displayText.length + i;
-                    if (charIndex === currentIndex) {
-                        wordDisplay += '<span id="cursor"></span>';
-                    }
-                    if (charIndex < currentIndex) {
-                        const correct = inputField.value[charIndex] === word[i];
-                        wordDisplay += `<span class="${correct ? 'correct' : 'incorrect'}">${word[i]}</span>`;
-                    } else {
-                        wordDisplay += word[i];
-                    }
+                if (absoluteIndex < currentIndex) {
+                    const correct = inputField.value[absoluteIndex] === currentText[absoluteIndex];
+                    displayText += `<span class="${correct ? 'correct' : 'incorrect'}">${relevantText[i]}</span>`;
+                } else {
+                    displayText += relevantText[i];
                 }
-                
-                displayText += `<span class="word">${wordDisplay}</span>`;
-                currentLineChars += wordLength;
-            });
-
+            }
             textDisplay.innerHTML = displayText;
-
-            // Calculate line height and scroll text up accordingly
-            const lineHeight = 36; // Adjust based on your font size and line height
-            const currentLine = Math.floor(currentIndex / charsPerLine);
-            const scrollOffset = Math.max(0, (currentLine - 2) * lineHeight);
-            textDisplay.style.transform = `translateY(-${scrollOffset}px)`;
         }
 
         function calculateWPM() {
