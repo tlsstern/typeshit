@@ -15,6 +15,7 @@ body {
 .container {
     max-width: 900px;
     margin: 0 auto;
+    padding-top: 2rem;
 }
 
 .header {
@@ -55,22 +56,16 @@ select:hover, button:hover {
     padding: 40px;
     border-radius: 8px;
     min-height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 #text-display {
-    font-size: 2rem;
+    font-size: 1.5rem;
     line-height: 1.8;
-    text-align: center;
-    transition: all 0.2s ease;
 }
 
 .char {
     position: relative;
     color: #666;
-    transition: all 0.2s ease;
 }
 
 .char.correct {
@@ -95,4 +90,17 @@ select:hover, button:hover {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #fff;
+}
+
+.title h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 } 

@@ -3,9 +3,52 @@ class TypingTest {
         this.words = [
             "the", "be", "to", "of", "and", "a", "in", "that", "have", "i",
             "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
-            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
-            "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
-            "so", "up", "out", "if", "about", "who", "get", "which", "go", "me"
+            "say", "this", "but", "his", "by", "from", "they", "we", "say", "her",
+            "she", "or", "an", "will", "my", "one", "all", "would", "there", "their",
+            "what", "so", "up", "out", "if", "about", "who", "get", "which", "go",
+            "me", "when", "make", "can", "like", "time", "no", "just", "him", "know",
+            "take", "people", "into", "year", "your", "good", "some", "could", "them", "see",
+            "other", "than", "then", "now", "look", "only", "come", "its", "over", "think",
+            "also", "back", "after", "use", "two", "how", "our", "work", "first", "well",
+            "way", "even", "new", "want", "because", "any", "these", "give", "day", "most",
+            "us", "time", "day", "year", "now", "month", "week", "hour", "minute", "second",
+            "morning", "evening", "night", "today", "tomorrow", "yesterday", "soon", "later", "early", "late",
+            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+            "many", "much", "few", "several", "some", "any", "all", "both", "each", "every",
+            "happy", "sad", "angry", "tired", "excited", "scared", "worried", "surprised", "confused", "proud",
+            "love", "hate", "like", "feel", "think", "know", "want", "need", "hope", "wish",
+            "family", "friend", "mother", "father", "parent", "child", "baby", "sister", "brother", "wife",
+            "husband", "son", "daughter", "uncle", "aunt", "cousin", "grandmother", "grandfather", "person", "people",
+            "home", "house", "room", "office", "school", "work", "store", "shop", "market", "restaurant",
+            "city", "town", "country", "world", "place", "area", "street", "road", "building", "garden",
+            "food", "water", "drink", "meal", "breakfast", "lunch", "dinner", "fruit", "vegetable", "meat",
+            "bread", "rice", "fish", "chicken", "beef", "pork", "egg", "milk", "coffee", "tea",
+            "red", "blue", "green", "yellow", "black", "white", "brown", "pink", "purple", "orange",
+            "gray", "silver", "gold", "dark", "light", "bright", "color", "shade", "tone", "hue",
+            "weather", "rain", "snow", "wind", "sun", "cloud", "storm", "hot", "cold", "warm",
+            "cool", "tree", "flower", "grass", "sky", "sea", "ocean", "river", "mountain", "beach",
+            "car", "bus", "train", "plane", "bike", "walk", "run", "drive", "ride", "fly",
+            "travel", "trip", "journey", "way", "road", "street", "path", "direction", "map", "route",
+            "computer", "phone", "internet", "email", "website", "online", "data", "system", "program", "software",
+            "app", "game", "video", "music", "picture", "camera", "screen", "device", "machine", "tool",
+            "work", "job", "career", "study", "learn", "teach", "student", "teacher", "class", "lesson",
+            "test", "exam", "grade", "paper", "book", "note", "write", "read", "speak", "listen",
+            "head", "face", "eye", "ear", "nose", "mouth", "tooth", "hair", "hand", "arm",
+            "leg", "foot", "body", "back", "heart", "brain", "skin", "bone", "muscle", "blood",
+            "clothes", "shirt", "pants", "dress", "shoe", "hat", "coat", "jacket", "sock", "belt",
+            "wear", "fit", "size", "style", "fashion", "design", "pattern", "color", "material", "fabric",
+            "make", "do", "take", "give", "get", "put", "set", "move", "turn", "change",
+            "open", "close", "start", "stop", "begin", "end", "come", "go", "leave", "return",
+            "say", "tell", "ask", "answer", "speak", "talk", "call", "write", "read", "listen",
+            "hear", "see", "look", "watch", "show", "mean", "explain", "understand", "know", "think",
+            "good", "bad", "big", "small", "high", "low", "long", "short", "old", "new",
+            "young", "different", "same", "right", "wrong", "true", "false", "important", "real", "best",
+            "thing", "way", "day", "man", "woman", "child", "world", "life", "time", "year",
+            "hand", "part", "eye", "place", "work", "week", "case", "point", "government", "company",
+            "could", "would", "should", "may", "might", "must", "shall", "will", "can", "need",
+            "try", "call", "ask", "seem", "feel", "become", "leave", "put", "mean", "keep",
+            "each", "well", "just", "while", "where", "why", "who", "whose", "which", "what",
+            "when", "then", "there", "here", "those", "these", "that", "this", "they", "them"
         ];
         
         this.textDisplay = document.getElementById('text-display');
@@ -24,15 +67,14 @@ class TypingTest {
         this.isTestActive = false;
         this.timer = null;
 
-        this.currentWord = '';
-        this.wordIndex = 0;
-        this.charIndex = 0;
         this.displayedWords = [];
-        this.wordsToShow = 3; // Number of words to show at once
-        this.initializeWords();
+        this.nextWords = [];
+        this.wordIndex = 0;
+        this.lineCount = 5;
+        this.charsPerLine = 60;
 
         this.initializeEventListeners();
-        this.generateNewText();
+        this.generateInitialText();
     }
 
     initializeEventListeners() {
@@ -77,46 +119,60 @@ class TypingTest {
         });
     }
 
-    initializeWords() {
-        this.displayedWords = [];
-        for (let i = 0; i < this.wordsToShow; i++) {
-            this.displayedWords.push(this.getRandomWord());
-        }
-        this.currentWord = this.displayedWords[0];
+    generateInitialText() {
+        this.displayedWords = this.generateWords(30); // Generate more words initially
+        this.nextWords = this.generateWords(15);
+        this.currentText = this.displayedWords.join(' ');
         this.renderText();
     }
 
-    getRandomWord() {
-        return this.words[Math.floor(Math.random() * this.words.length)];
+    generateWords(count) {
+        return Array.from({length: count}, () => this.words[Math.floor(Math.random() * this.words.length)]);
     }
 
     renderText() {
-        const text = this.displayedWords.join(' ');
-        this.textDisplay.innerHTML = text
-            .split('')
-            .map(char => `<span class="char">${char}</span>`)
-            .join('');
+        let displayText = "";
+        let currentLine = 0;
+        let currentLineChars = 0;
+
+        const allWords = [...this.displayedWords, ...this.nextWords];
         
-        const firstChar = this.textDisplay.querySelector('.char');
-        if (firstChar) firstChar.classList.add('active');
+        for (let i = this.wordIndex; i < allWords.length && currentLine < this.lineCount; i++) {
+            const word = allWords[i];
+            if (currentLineChars + word.length + 1 > this.charsPerLine) {
+                displayText += "\n";
+                currentLine++;
+                currentLineChars = 0;
+            }
+            if (currentLine < this.lineCount) {
+                displayText += word + " ";
+                currentLineChars += word.length + 1;
+            }
+        }
+
+        this.textDisplay.innerHTML = displayText.split('').map((char, index) => 
+            `<span class="char ${index === this.currentIndex ? 'active' : ''}">${char}</span>`
+        ).join('');
     }
 
     handleBackspace() {
-        if (this.charIndex > 0) {
-            this.charIndex--;
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
             const charElements = this.textDisplay.querySelectorAll('.char');
             
-            charElements[this.charIndex].classList.remove('correct', 'incorrect');
-            charElements[this.charIndex].classList.add('active');
+            charElements[this.currentIndex].classList.remove('correct', 'incorrect');
+            charElements[this.currentIndex].classList.add('active');
             
-            if (charElements[this.charIndex + 1]) {
-                charElements[this.charIndex + 1].classList.remove('active');
+            if (charElements[this.currentIndex + 1]) {
+                charElements[this.currentIndex + 1].classList.remove('active');
             }
 
-            this.totalChars--;
-            if (charElements[this.charIndex].classList.contains('correct')) {
+            if (this.mistakes.has(this.currentIndex)) {
+                this.mistakes.delete(this.currentIndex);
+            } else {
                 this.correctChars--;
             }
+            this.totalChars--;
             
             this.updateStats();
         }
@@ -125,39 +181,47 @@ class TypingTest {
     checkCharacter(key) {
         if (!this.isTestActive) return;
         
-        const currentChar = this.displayedWords.join(' ')[this.charIndex];
+        const currentChar = this.currentText[this.currentIndex];
         const charElements = this.textDisplay.querySelectorAll('.char');
         
-        charElements[this.charIndex].classList.remove('active');
+        charElements[this.currentIndex].classList.remove('active');
         
         if (key === currentChar) {
-            charElements[this.charIndex].classList.add('correct');
+            charElements[this.currentIndex].classList.add('correct');
             this.correctChars++;
-            
-            // Check if word is completed
-            if (currentChar === ' ' || this.charIndex === this.displayedWords.join(' ').length - 1) {
-                this.wordIndex++;
-                // Add new word and remove first word
-                this.displayedWords.shift();
-                this.displayedWords.push(this.getRandomWord());
-                this.renderText();
-                this.charIndex = 0;
-            } else {
-                this.charIndex++;
-                if (charElements[this.charIndex]) {
-                    charElements[this.charIndex].classList.add('active');
-                }
-            }
         } else {
-            charElements[this.charIndex].classList.add('incorrect');
-            this.charIndex++;
-            if (charElements[this.charIndex]) {
-                charElements[this.charIndex].classList.add('active');
-            }
+            charElements[this.currentIndex].classList.add('incorrect');
+            this.mistakes.add(this.currentIndex);
         }
 
+        this.currentIndex++;
         this.totalChars++;
+
+        // Check if we need to shift text
+        if (this.currentIndex >= this.charsPerLine) {
+            this.shiftText();
+        }
+
+        if (this.currentIndex < charElements.length) {
+            charElements[this.currentIndex].classList.add('active');
+        }
+
         this.updateStats();
+    }
+
+    shiftText() {
+        const wordsToRemove = this.displayedWords.findIndex(word => 
+            this.currentText.indexOf(word, this.currentIndex) !== -1
+        );
+        
+        if (wordsToRemove > 0) {
+            this.displayedWords = this.displayedWords.slice(wordsToRemove);
+            this.displayedWords = [...this.displayedWords, ...this.nextWords.slice(0, wordsToRemove)];
+            this.nextWords = [...this.nextWords.slice(wordsToRemove), ...this.generateWords(wordsToRemove)];
+            this.currentText = this.displayedWords.join(' ') + ' ' + this.nextWords.join(' ');
+            this.currentIndex -= this.charsPerLine;
+            this.renderText();
+        }
     }
 
     startTest() {
@@ -208,7 +272,7 @@ class TypingTest {
         this.timeDisplay.textContent = this.timeLimit + 's';
         this.wpmDisplay.textContent = '0';
         this.accuracyDisplay.textContent = '0%';
-        this.generateNewText();
+        this.generateInitialText();
     }
 }
 
