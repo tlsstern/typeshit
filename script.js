@@ -486,10 +486,25 @@ class TypingTest {
         }
 
         // Prepare data for the graph
-        const labels = this.wpmHistory.map(point => 
-            Math.round(point.time / this.timeLimit * 100) + '%'
-        );
-        const data = this.wpmHistory.map(point => point.wpm);
+        const labels = [];
+        const data = [];
+        const totalTime = this.timeLimit;
+
+        // Create time points from 10% to 100%
+        for (let i = 1; i <= 10; i++) {
+            const timePoint = (i / 10) * totalTime;
+            labels.push(i * 10 + '%');
+            
+            // Find the closest WPM data point for this time
+            const closestPoint = this.wpmHistory.reduce((closest, point) => {
+                if (Math.abs(point.time - timePoint) < Math.abs(closest.time - timePoint)) {
+                    return point;
+                }
+                return closest;
+            }, this.wpmHistory[0] || { time: 0, wpm: 0 });
+            
+            data.push(closestPoint ? closestPoint.wpm : 0);
+        }
 
         // Create accuracy graph
         const ctx = document.getElementById('accuracyGraph').getContext('2d');
@@ -518,13 +533,21 @@ class TypingTest {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
+                        display: false
+                    },
+                    title: {
                         display: true,
-                        labels: {
-                            color: getComputedStyle(document.documentElement)
-                                .getPropertyValue('--text-color'),
-                            font: {
-                                size: 14
-                            }
+                        text: 'WPM over time',
+                        color: getComputedStyle(document.documentElement)
+                            .getPropertyValue('--text-color'),
+                        font: {
+                            size: 16,
+                            family: 'Arial, sans-serif',
+                            weight: '500'
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
                         }
                     },
                     tooltip: {
@@ -559,7 +582,7 @@ class TypingTest {
                         ticks: {
                             color: getComputedStyle(document.documentElement)
                                 .getPropertyValue('--char-color'),
-                            stepSize: 50, // This will create ticks at intervals of 50 WPM
+                            stepSize: 50,
                             callback: function(value) {
                                 return value + ' WPM';
                             }
