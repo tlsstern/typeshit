@@ -522,7 +522,7 @@ class TypingTest {
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'WPM over time',
+                        label: 'WPM',
                         data: data,
                         borderColor: getComputedStyle(document.documentElement)
                             .getPropertyValue('--correct-color'),
