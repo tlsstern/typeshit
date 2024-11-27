@@ -183,6 +183,8 @@ class TypingTest {
             }
         };
 
+        this.typingArea = document.querySelector('.typing-area');
+
         this.initializeEventListeners();
         this.generateInitialText();
         this.applyTheme('dark'); // Set default theme
@@ -195,6 +197,20 @@ class TypingTest {
 
     initializeEventListeners() {
         document.addEventListener('keydown', (e) => {
+            // Handle Tab key
+            if (e.key === 'Tab') {
+                e.preventDefault(); // Prevent default tab behavior
+                this.restartBtn.focus(); // Focus the restart button
+                return;
+            }
+
+            // Handle Enter key when restart button is focused
+            if (e.key === 'Enter' && document.activeElement === this.restartBtn) {
+                e.preventDefault();
+                this.restartTest();
+                return;
+            }
+
             if (this.resultsModal.style.display === 'flex') {
                 if (e.key === 'Escape') {
                     this.closeResultsModal();
@@ -213,6 +229,12 @@ class TypingTest {
 
             if (!this.isTestActive && e.key.length === 1) {
                 this.startTest();
+            }
+
+            // Prevent focus on other elements during the test
+            if (this.isTestActive && !this.typingArea.contains(document.activeElement)) {
+                e.preventDefault();
+                this.typingArea.focus();
             }
         });
 
@@ -233,6 +255,25 @@ class TypingTest {
         });
         this.themeSelect.addEventListener('change', (e) => {
             this.applyTheme(e.target.value);
+        });
+
+        // Prevent focus on select and button elements during the test
+        this.restartBtn.addEventListener('mousedown', (e) => {
+            if (this.isTestActive) {
+                e.preventDefault();
+            }
+        });
+
+        this.timeSelect.addEventListener('mousedown', (e) => {
+            if (this.isTestActive) {
+                e.preventDefault();
+            }
+        });
+
+        this.themeSelect.addEventListener('mousedown', (e) => {
+            if (this.isTestActive) {
+                e.preventDefault();
+            }
         });
     }
 
@@ -329,6 +370,12 @@ class TypingTest {
         this.startTime = new Date();
         this.timer = setInterval(() => this.updateTime(), 1000);
         this.statsTimer = setInterval(() => this.updateStats(), 100);
+        
+        // Focus on the typing area
+        this.typingArea.focus();
+        
+        // Make the typing area focusable
+        this.typingArea.setAttribute('tabindex', '-1');
     }
 
     updateTime() {
