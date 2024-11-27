@@ -1,9 +1,14 @@
 class TypingTest {
     constructor() {
         this.words = [
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I",
-            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
-            // Add more words as needed
+            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I", "it", "for", "not", "on", "with", 
+            "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", 
+            "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", 
+            "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "him", 
+            "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", 
+            "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", 
+            "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", 
+            "give", "day", "most", "us"
         ];
         this.currentText = '';
         this.currentIndex = 0;
@@ -19,11 +24,13 @@ class TypingTest {
         // DOM elements
         this.textDisplay = document.getElementById('text-display');
         this.restartBtn = document.getElementById('restart');
-        this.timeSelect = document.getElementById('timeSelect');
+        this.timeButtons = document.querySelectorAll('.time-btn');
+        this.customTimeInput = document.getElementById('customTime');
         this.themeSelect = document.getElementById('themeSelect');
         this.wpmDisplay = document.getElementById('wpm');
         this.accuracyDisplay = document.getElementById('accuracy');
         this.timeDisplay = document.getElementById('time');
+        this.timeSelect = document.getElementById('timeSelect');
 
         // Default settings
         this.defaultTheme = 'cyber';
@@ -40,6 +47,11 @@ class TypingTest {
         this.initializeEventListeners();
         this.generateNewText();
         this.textDisplay.focus();
+
+        this.wordIndex = 0;
+        this.displayedWords = [];
+        this.nextWords = [];
+        this.generateInitialText();
     }
 
     initializeEventListeners() {
@@ -48,14 +60,40 @@ class TypingTest {
             this.restartTest(true);
         });
         
-        this.timeSelect.addEventListener('change', (e) => {
-            this.timeLimit = parseInt(e.target.value);
-            localStorage.setItem('time', this.timeLimit);
-            this.restartTest(true);
+        this.timeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const newTime = parseInt(btn.dataset.time);
+                this.updateTimeSelection(newTime);
+                btn.classList.add('active');
+            });
         });
-        
+
+        this.customTimeInput.addEventListener('change', (e) => {
+            let newTime = parseInt(e.target.value);
+            
+            // Validate input
+            if (isNaN(newTime) || newTime < 1) {
+                newTime = 30;
+                this.customTimeInput.value = '';
+            } else if (newTime > 999) {
+                newTime = 999;
+                this.customTimeInput.value = 999;
+            }
+            
+            this.updateTimeSelection(newTime);
+        });
+
+        this.customTimeInput.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+        });
+
         this.themeSelect.addEventListener('change', (e) => {
             this.changeTheme(e.target.value);
+        });
+
+        this.timeSelect.addEventListener('change', (e) => {
+            this.timeLimit = parseInt(e.target.value);
+            this.restartTest(true);
         });
     }
 
@@ -125,24 +163,27 @@ class TypingTest {
     }
 
     processCharacter(char) {
-        if (this.currentIndex >= this.currentText.length) return;
-
         const currentChar = this.currentText[this.currentIndex];
         const isCorrect = char === currentChar;
         
-        // Update character display
         const chars = this.textDisplay.children;
         if (chars[this.currentIndex]) {
             chars[this.currentIndex].classList.remove('active');
             chars[this.currentIndex].classList.add(isCorrect ? 'correct' : 'incorrect');
         }
 
-        // Update statistics
         this.totalChars++;
         if (isCorrect) this.correctChars++;
 
-        // Move to next character
         this.currentIndex++;
+
+        // Check if we need to add more words
+        if (this.currentIndex >= (this.displayedWords.join(' ').length)) {
+            this.displayedWords = [...this.displayedWords.slice(this.displayedWords.length / 2), ...this.nextWords];
+            this.nextWords = this.generateWords(30);
+            this.renderText();
+        }
+
         if (chars[this.currentIndex]) {
             chars[this.currentIndex].classList.add('active');
         }
@@ -274,31 +315,24 @@ class TypingTest {
     }
 
     restartTest(isManualRestart = false) {
-        // Clear any existing timer
-        if (this.timer) {
-            clearInterval(this.timer);
-        }
-
+        clearInterval(this.timer);
         this.isModalOpen = false;
         this.isTestActive = false;
         this.currentIndex = 0;
         this.correctChars = 0;
         this.totalChars = 0;
         this.startTime = null;
+        this.wordIndex = 0;
+        this.displayedWords = [];
+        this.nextWords = [];
         
         // Reset displays
         this.wpmDisplay.textContent = '0';
         this.accuracyDisplay.textContent = '0%';
         this.timeDisplay.textContent = `${this.timeLimit}s`;
         
-        // Generate new text
-        this.generateNewText();
-
-        // Ensure keyboard listener is active
-        document.removeEventListener('keydown', this.boundHandleKeyDown);
+        this.generateInitialText();
         document.addEventListener('keydown', this.boundHandleKeyDown);
-        
-        // Focus on the typing area
         this.textDisplay.focus();
     }
 
@@ -315,7 +349,6 @@ class TypingTest {
 
         // Initialize time
         const savedTime = localStorage.getItem('time') || this.defaultTime;
-        this.timeSelect.value = savedTime;
         this.timeLimit = parseInt(savedTime);
         this.timeDisplay.textContent = `${this.timeLimit}s`;
     }
@@ -343,6 +376,79 @@ class TypingTest {
                 this.timeDisplay.textContent = `${this.timeLimit}s`;
             }
         }
+    }
+
+    setDefaultTime() {
+        // Set default time (30 seconds)
+        const defaultTime = 30;
+        this.timeLimit = defaultTime;
+        this.timeDisplay.textContent = `${defaultTime}s`;
+        
+        // Set active state on default button
+        this.timeButtons.forEach(btn => {
+            if (parseInt(btn.dataset.time) === defaultTime) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    updateTimeSelection(newTime) {
+        // Update time limit
+        this.timeLimit = newTime;
+        this.timeDisplay.textContent = `${newTime}s`;
+        
+        // Reset active state on all buttons
+        this.timeButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Clear custom input if selecting a preset time
+        if ([10, 15, 30].includes(newTime)) {
+            this.customTimeInput.value = '';
+        }
+        
+        // Restart test
+        this.restartTest(true);
+    }
+
+    generateInitialText() {
+        // Generate initial set of words
+        this.displayedWords = this.generateWords(50);
+        this.nextWords = this.generateWords(30);
+        this.currentText = this.displayedWords.join(' ');
+        this.renderText();
+    }
+
+    generateWords(count) {
+        let words = [];
+        for (let i = 0; i < count; i++) {
+            words.push(this.words[Math.floor(Math.random() * this.words.length)]);
+        }
+        return words;
+    }
+
+    renderText() {
+        const allWords = [...this.displayedWords, ...this.nextWords];
+        this.currentText = allWords.join(' ');
+        
+        this.textDisplay.innerHTML = allWords.map(word => 
+            word.split('').map(char => 
+                `<span class="char">${char}</span>`
+            ).join('')
+        ).join('<span class="char"> </span>');
+
+        // Maintain cursor position
+        const chars = this.textDisplay.children;
+        if (chars[this.currentIndex]) {
+            chars[this.currentIndex].classList.add('active');
+        }
+    }
+
+    // Add this CSS to handle word wrapping and scrolling
+    setupStyles() {
+        this.textDisplay.style.cssText = `
+            overflow-y: hidden;
+            white-space: pre-wrap;
+            word-break: break-word;
+        `;
     }
 }
 

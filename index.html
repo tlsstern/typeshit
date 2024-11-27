@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smooth Typing Test</title>
+    <title>TypeShit</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Smooth Typing Test</h1>
+            <h1>TypeShit</h1>
             <div class="options">
                 <div class="tooltip" data-tooltip="Press Tab + Enter to restart">
                     <button id="restart">Restart Test</button>
                 </div>
-                <select id="timeSelect">
-                    <option value="10">10 seconds</option>
-                    <option value="15">15 seconds</option>
-                    <option value="30" selected>30 seconds</option>
-                    <option value="60">1 minute</option>
-                    <option value="120">2 minutes</option>
-                    <option value="300">5 minutes</option>
-                </select>
+                <div class="time-options">
+                    <select id="timeSelect">
+                        <option value="10">10 seconds</option>
+                        <option value="15">15 seconds</option>
+                        <option value="30" selected>30 seconds</option>
+                        <option value="60">1 minute</option>
+                        <option value="120">2 minutes</option>
+                    </select>
+                </div>
                 <select id="themeSelect">
                     <option value="cyber" selected>Cyber</option>
                     <option value="sunset">Sunset</option>
