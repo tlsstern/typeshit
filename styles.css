@@ -250,4 +250,13 @@ select:hover, button:hover {
 
 #restart {
     min-width: 120px; /* Give the button a consistent width */
+}
+
+*:focus {
+    outline: none;
+}
+
+#restart:focus {
+    outline: none;
+    background-color: var(--button-hover-bg);
 } 
