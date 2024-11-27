@@ -513,7 +513,7 @@ class TypingTest {
 
             // Find the maximum WPM achieved
             const maxWPM = Math.max(...data, 0);  // Use 0 as fallback
-            const yAxisMax = maxWPM + 30;  // Change from 50 to 30
+            const yAxisMax = Math.ceil(maxWPM / 50) * 50;  // Round up to next 50
 
             // Create accuracy graph
             const ctx = document.getElementById('accuracyGraph').getContext('2d');
@@ -583,7 +583,7 @@ class TypingTest {
                         },
                         y: {
                             min: 0,
-                            max: yAxisMax,  // Use dynamic maximum instead of fixed 400
+                            max: yAxisMax,  // Use the rounded up value
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)',
                                 drawBorder: false
