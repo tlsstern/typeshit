@@ -156,9 +156,9 @@ select:hover, button:hover {
     content: '';
     position: absolute;
     left: -1px;
-    top: 0;
+    top: 15%;
     width: 2px;
-    height: 100%;
+    height: 70%;
     background-color: var(--cursor-color);
     box-shadow: 0 0 4px var(--cursor-color);
     opacity: 1;
