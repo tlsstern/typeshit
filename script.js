@@ -185,8 +185,6 @@ class TypingTest {
 
         this.typingArea = document.querySelector('.typing-area');
 
-        this.typingTimeout = null; // To track typing activity
-
         this.initializeEventListeners();
         this.generateInitialText();
         this.applyTheme('dark'); // Set default theme
@@ -238,9 +236,6 @@ class TypingTest {
                 e.preventDefault();
                 this.typingArea.focus();
             }
-
-            // Reset the typing timeout on keydown
-            this.resetTypingTimeout();
         });
 
         document.addEventListener('keypress', (e) => {
@@ -469,23 +464,6 @@ class TypingTest {
         const theme = this.themes[themeName];
         for (const [property, value] of Object.entries(theme)) {
             document.documentElement.style.setProperty(property, value);
-        }
-    }
-
-    resetTypingTimeout() {
-        clearTimeout(this.typingTimeout);
-        this.setCursorOpacity(1); // Make cursor fully visible while typing
-
-        // Set a timeout to fade the cursor after 1 second of inactivity
-        this.typingTimeout = setTimeout(() => {
-            this.setCursorOpacity(0); // Fade the cursor
-        }, 1000);
-    }
-
-    setCursorOpacity(opacity) {
-        const activeChar = document.querySelector('.char.active::after');
-        if (activeChar) {
-            activeChar.style.opacity = opacity;
         }
     }
 }

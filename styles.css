@@ -132,8 +132,13 @@ select:hover, button:hover {
     height: 100%;
     background-color: var(--cursor-color);
     box-shadow: 0 0 8px var(--cursor-color);
-    transition: opacity 0.5s ease;
+    animation: cursorBlink 1s ease-in-out infinite;
     opacity: 1;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 .title {
