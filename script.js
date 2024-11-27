@@ -24,6 +24,13 @@ class TypingTest {
         this.isTestActive = false;
         this.timer = null;
 
+        this.currentWord = '';
+        this.wordIndex = 0;
+        this.charIndex = 0;
+        this.displayedWords = [];
+        this.wordsToShow = 3; // Number of words to show at once
+        this.initializeWords();
+
         this.initializeEventListeners();
         this.generateNewText();
     }
@@ -70,19 +77,24 @@ class TypingTest {
         });
     }
 
-    generateNewText() {
-        let text = '';
-        for (let i = 0; i < 20; i++) {
-            text += this.words[Math.floor(Math.random() * this.words.length)] + ' ';
+    initializeWords() {
+        this.displayedWords = [];
+        for (let i = 0; i < this.wordsToShow; i++) {
+            this.displayedWords.push(this.getRandomWord());
         }
-        this.currentText = text.trim();
+        this.currentWord = this.displayedWords[0];
         this.renderText();
     }
 
+    getRandomWord() {
+        return this.words[Math.floor(Math.random() * this.words.length)];
+    }
+
     renderText() {
-        this.textDisplay.innerHTML = this.currentText
+        const text = this.displayedWords.join(' ');
+        this.textDisplay.innerHTML = text
             .split('')
-            .map(char => `<span class="char">${char === ' ' ? ' ' : char}</span>`)
+            .map(char => `<span class="char">${char}</span>`)
             .join('');
         
         const firstChar = this.textDisplay.querySelector('.char');
@@ -90,23 +102,21 @@ class TypingTest {
     }
 
     handleBackspace() {
-        if (this.currentIndex > 0) {
-            this.currentIndex--;
+        if (this.charIndex > 0) {
+            this.charIndex--;
             const charElements = this.textDisplay.querySelectorAll('.char');
             
-            charElements[this.currentIndex].classList.remove('correct', 'incorrect');
-            charElements[this.currentIndex].classList.add('active');
+            charElements[this.charIndex].classList.remove('correct', 'incorrect');
+            charElements[this.charIndex].classList.add('active');
             
-            if (charElements[this.currentIndex + 1]) {
-                charElements[this.currentIndex + 1].classList.remove('active');
+            if (charElements[this.charIndex + 1]) {
+                charElements[this.charIndex + 1].classList.remove('active');
             }
 
-            if (this.mistakes.has(this.currentIndex)) {
-                this.mistakes.delete(this.currentIndex);
-            } else {
+            this.totalChars--;
+            if (charElements[this.charIndex].classList.contains('correct')) {
                 this.correctChars--;
             }
-            this.totalChars--;
             
             this.updateStats();
         }
@@ -115,26 +125,38 @@ class TypingTest {
     checkCharacter(key) {
         if (!this.isTestActive) return;
         
-        const currentChar = this.currentText[this.currentIndex];
+        const currentChar = this.displayedWords.join(' ')[this.charIndex];
         const charElements = this.textDisplay.querySelectorAll('.char');
         
-        charElements[this.currentIndex].classList.remove('active');
+        charElements[this.charIndex].classList.remove('active');
         
         if (key === currentChar) {
-            charElements[this.currentIndex].classList.add('correct');
+            charElements[this.charIndex].classList.add('correct');
             this.correctChars++;
+            
+            // Check if word is completed
+            if (currentChar === ' ' || this.charIndex === this.displayedWords.join(' ').length - 1) {
+                this.wordIndex++;
+                // Add new word and remove first word
+                this.displayedWords.shift();
+                this.displayedWords.push(this.getRandomWord());
+                this.renderText();
+                this.charIndex = 0;
+            } else {
+                this.charIndex++;
+                if (charElements[this.charIndex]) {
+                    charElements[this.charIndex].classList.add('active');
+                }
+            }
         } else {
-            charElements[this.currentIndex].classList.add('incorrect');
-            this.mistakes.add(this.currentIndex);
+            charElements[this.charIndex].classList.add('incorrect');
+            this.charIndex++;
+            if (charElements[this.charIndex]) {
+                charElements[this.charIndex].classList.add('active');
+            }
         }
 
-        this.currentIndex++;
         this.totalChars++;
-
-        if (this.currentIndex < this.currentText.length) {
-            charElements[this.currentIndex].classList.add('active');
-        }
-
         this.updateStats();
     }
 

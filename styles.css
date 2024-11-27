@@ -55,16 +55,22 @@ select:hover, button:hover {
     padding: 40px;
     border-radius: 8px;
     min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #text-display {
-    font-size: 1.5rem;
+    font-size: 2rem;
     line-height: 1.8;
+    text-align: center;
+    transition: all 0.2s ease;
 }
 
 .char {
     position: relative;
     color: #666;
+    transition: all 0.2s ease;
 }
 
 .char.correct {
