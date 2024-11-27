@@ -227,6 +227,10 @@ class TypingTest {
             this.closeResultsModal();
             this.restartTest();
         });
+
+        // Add this new property to store WPM data points
+        this.wpmHistory = [];
+        this.lastWpmUpdate = null;
     }
 
     initializeEventListeners() {
@@ -426,7 +430,8 @@ class TypingTest {
     updateStats() {
         if (!this.startTime) return;
         
-        const timeElapsed = (new Date() - this.startTime) / 1000 / 60; // in minutes
+        const now = new Date();
+        const timeElapsed = (now - this.startTime) / 1000 / 60; // in minutes
         const wpm = Math.round((this.correctChars / 5) / timeElapsed) || 0;
         const accuracy = this.totalChars > 0 
             ? Math.round((this.correctChars / this.totalChars) * 100) 
@@ -434,6 +439,12 @@ class TypingTest {
 
         this.wpmDisplay.textContent = wpm;
         this.accuracyDisplay.textContent = accuracy + '%';
+
+        // Record WPM every second
+        if (!this.lastWpmUpdate || (now - this.lastWpmUpdate) >= 1000) {
+            this.recordWPM();
+            this.lastWpmUpdate = now;
+        }
     }
 
     endTest() {
@@ -444,29 +455,111 @@ class TypingTest {
     }
 
     showResultsModal() {
-        // Calculate final stats
         const timeElapsed = this.timeLimit / 60; // Convert seconds to minutes
         const wpm = Math.round((this.correctChars / 5) / timeElapsed);
         const accuracy = this.totalChars > 0 
             ? Math.round((this.correctChars / this.totalChars) * 100) 
             : 0;
-        const totalChars = this.totalChars;
-        const correctChars = this.correctChars;
-        const incorrectChars = totalChars - correctChars;
 
         // Update display
-        this.wpmResult.textContent = `WPM: ${wpm}`;
-        this.accuracyResult.textContent = `Accuracy: ${accuracy}%`;
-        this.totalCharsResult.textContent = `Total Characters: ${totalChars}`;
-        this.correctCharsResult.textContent = `Correct Characters: ${correctChars}`;
-        this.incorrectCharsResult.textContent = `Incorrect Characters: ${incorrectChars}`;
-        
-        // Update the header stats to match final results
-        this.wpmDisplay.textContent = wpm;
-        this.accuracyDisplay.textContent = accuracy + '%';
-        
+        this.wpmResult.textContent = wpm;
+        this.accuracyResult.textContent = `${accuracy}%`;
+        this.totalCharsResult.textContent = this.totalChars;
+        this.correctCharsResult.textContent = this.correctChars;
+        this.incorrectCharsResult.textContent = this.totalChars - this.correctChars;
+
+        // Clear any existing chart
+        const existingChart = Chart.getChart("accuracyGraph");
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        // Prepare data for the graph
+        const labels = this.wpmHistory.map(point => 
+            Math.round(point.time / this.timeLimit * 100) + '%'
+        );
+        const data = this.wpmHistory.map(point => point.wpm);
+
+        // Create accuracy graph
+        const ctx = document.getElementById('accuracyGraph').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'WPM over time',
+                    data: data,
+                    borderColor: getComputedStyle(document.documentElement)
+                        .getPropertyValue('--correct-color'),
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: getComputedStyle(document.documentElement)
+                        .getPropertyValue('--correct-color'),
+                    pointBorderColor: 'transparent',
+                    pointHoverRadius: 6,
+                    pointRadius: 4,
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--text-color'),
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: getComputedStyle(document.documentElement)
+                            .getPropertyValue('--header-bg'),
+                        titleColor: getComputedStyle(document.documentElement)
+                            .getPropertyValue('--text-color'),
+                        bodyColor: getComputedStyle(document.documentElement)
+                            .getPropertyValue('--text-color'),
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--char-color')
+                        }
+                    },
+                    y: {
+                        min: 0,
+                        max: 400,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--char-color'),
+                            stepSize: 50, // This will create ticks at intervals of 50 WPM
+                            callback: function(value) {
+                                return value + ' WPM';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Show modal with animation
         this.resultsModal.style.display = 'flex';
-        // Trigger reflow
         void this.resultsModal.offsetWidth;
         this.resultsModal.classList.add('show');
     }
@@ -488,6 +581,8 @@ class TypingTest {
         this.mistakes = new Set();
         this.startTime = null;
         this.isTestActive = false;
+        this.wpmHistory = []; // Clear WPM history
+        this.lastWpmUpdate = null;
         this.timeDisplay.textContent = this.timeLimit + 's';
         this.wpmDisplay.textContent = '0';
         this.accuracyDisplay.textContent = '0%';
@@ -501,6 +596,17 @@ class TypingTest {
                 document.documentElement.style.setProperty(property, value);
             });
         }
+    }
+
+    // Add this new method to record WPM data points
+    recordWPM() {
+        const now = new Date();
+        const timeElapsed = (now - this.startTime) / 1000 / 60; // in minutes
+        const currentWPM = Math.round((this.correctChars / 5) / timeElapsed) || 0;
+        this.wpmHistory.push({
+            time: timeElapsed * 60, // convert to seconds
+            wpm: currentWPM
+        });
     }
 }
 

@@ -6,6 +6,7 @@
     <title>TypeShit</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -48,13 +49,37 @@
 
     <div id="resultsModal" class="modal">
         <div class="modal-content">
-            <h2>Your Results</h2>
-            <p id="wpmResult"></p>
-            <p id="accuracyResult"></p>
-            <p id="totalCharsResult"></p>
-            <p id="correctCharsResult"></p>
-            <p id="incorrectCharsResult"></p>
-            <button id="playAgainBtn">Play Again</button>
+            <div class="graph-section">
+                <canvas id="accuracyGraph"></canvas>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-card primary">
+                    <div class="stat-value" id="wpmResult">0</div>
+                    <div class="stat-label">WPM</div>
+                </div>
+                <div class="stat-card primary">
+                    <div class="stat-value" id="accuracyResult">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCharsResult">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="correctCharsResult">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="incorrectCharsResult">0</div>
+                    <div class="stat-label">Incorrect</div>
+                </div>
+            </div>
+
+            <button id="playAgainBtn">
+                <span class="material-icons">replay</span>
+                Try Again
+            </button>
         </div>
     </div>
     <script src="script.js"></script>
