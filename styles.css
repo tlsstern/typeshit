@@ -355,13 +355,16 @@ select:hover, button:hover {
 
 #restart:focus {
     outline: none;
+    background-color: transparent;
 }
 
 #restart .material-icons {
     font-size: 20px;
 }
 
-#restart:hover .material-icons {
+/* Animation for both hover and focus */
+#restart:hover .material-icons,
+#restart:focus .material-icons {
     animation: rotateAndColor 0.5s ease forwards;
 }
 
