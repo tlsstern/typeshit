@@ -71,8 +71,61 @@ class TypingTest {
         this.visibleTextStart = 0;
         this.currentLine = 0;
         this.statsTimer = null;
+        this.themeSelect = document.getElementById('themeSelect');
+        this.themes = {
+            dark: {
+                '--bg-color': '#1a1a1a',
+                '--text-color': '#fff',
+                '--header-bg': '#2a2a2a',
+                '--typing-area-bg': '#2a2a2a',
+                '--char-color': '#666',
+                '--correct-color': '#4caf50',
+                '--incorrect-color': '#f44336',
+                '--cursor-color': '#fff',
+                '--button-bg': '#333',
+                '--button-hover-bg': '#444'
+            },
+            light: {
+                '--bg-color': '#f5f5f5',
+                '--text-color': '#333',
+                '--header-bg': '#e0e0e0',
+                '--typing-area-bg': '#fff',
+                '--char-color': '#999',
+                '--correct-color': '#4caf50',
+                '--incorrect-color': '#f44336',
+                '--cursor-color': '#333',
+                '--button-bg': '#ddd',
+                '--button-hover-bg': '#ccc'
+            },
+            blue: {
+                '--bg-color': '#1a237e',
+                '--text-color': '#fff',
+                '--header-bg': '#3f51b5',
+                '--typing-area-bg': '#283593',
+                '--char-color': '#9fa8da',
+                '--correct-color': '#00e676',
+                '--incorrect-color': '#ff1744',
+                '--cursor-color': '#fff',
+                '--button-bg': '#5c6bc0',
+                '--button-hover-bg': '#7986cb'
+            },
+            green: {
+                '--bg-color': '#1b5e20',
+                '--text-color': '#fff',
+                '--header-bg': '#4caf50',
+                '--typing-area-bg': '#2e7d32',
+                '--char-color': '#a5d6a7',
+                '--correct-color': '#ffeb3b',
+                '--incorrect-color': '#ff6e40',
+                '--cursor-color': '#fff',
+                '--button-bg': '#66bb6a',
+                '--button-hover-bg': '#81c784'
+            }
+        };
+
         this.initializeEventListeners();
         this.generateInitialText();
+        this.applyTheme('dark'); // Set default theme
 
         this.playAgainBtn.addEventListener('click', () => {
             this.closeResultsModal();
@@ -117,6 +170,9 @@ class TypingTest {
         this.timeSelect.addEventListener('change', (e) => {
             this.timeLimit = parseInt(e.target.value);
             this.restartTest();
+        });
+        this.themeSelect.addEventListener('change', (e) => {
+            this.applyTheme(e.target.value);
         });
     }
 
@@ -295,6 +351,13 @@ class TypingTest {
         this.wpmDisplay.textContent = '0';
         this.accuracyDisplay.textContent = '0%';
         this.generateInitialText();
+    }
+
+    applyTheme(themeName) {
+        const theme = this.themes[themeName];
+        for (const [property, value] of Object.entries(theme)) {
+            document.documentElement.style.setProperty(property, value);
+        }
     }
 }
 
