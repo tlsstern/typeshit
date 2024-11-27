@@ -3,288 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Test</title>
-    <style>
-        body {
-            background-color: #232323;
-            color: #e2b714;
-            font-family: 'Roboto Mono', monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            text-align: center;
-        }
-
-        #text-display {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            line-height: 1.5;
-            text-align: left;
-            color: #646669;
-        }
-
-        .correct {
-            color: #e2b714;
-        }
-
-        .incorrect {
-            color: #ca4754;
-            text-decoration: underline;
-        }
-
-        #input-field {
-            width: 0;
-            height: 0;
-            opacity: 0;
-            position: absolute;
-        }
-
-        #stats {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-            color: #646669;
-        }
-
-        .stat-box {
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        #cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.5rem;
-            background-color: #e2b714;
-            animation: blink 1s infinite;
-            position: relative;
-            top: 3px;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-    </style>
+    <title>Smooth Typing Test</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <div id="text-display"></div>
-        <input type="text" id="input-field" autocomplete="off">
-        <div id="stats">
-            <div class="stat-box">
-                <div>WPM</div>
-                <div id="wpm">0</div>
-            </div>
-            <div class="stat-box">
-                <div>Accuracy</div>
-                <div id="accuracy">100%</div>
-            </div>
-            <div class="stat-box">
-                <div>Time</div>
-                <div id="time">15s</div>
+        <div class="header">
+            <h1>Smooth Typing Test</h1>
+            <div class="options">
+                <div class="tooltip" data-tooltip="Press Tab + Enter to restart">
+                    <button id="restart">Restart Test</button>
+                </div>
+                <select id="timeSelect">
+                    <option value="10">10 seconds</option>
+                    <option value="15">15 seconds</option>
+                    <option value="30" selected>30 seconds</option>
+                    <option value="60">1 minute</option>
+                    <option value="120">2 minutes</option>
+                    <option value="300">5 minutes</option>
+                </select>
+                <select id="themeSelect">
+                    <option value="cyber" selected>Cyber</option>
+                    <option value="sunset">Sunset</option>
+                    <option value="nature">Nature</option>
+                    <option value="neon">Neon</option>
+                    <option value="pastel">Pastel</option>
+                </select>
             </div>
         </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">WPM</span>
+                <span id="wpm">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Accuracy</span>
+                <span id="accuracy">0%</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Time</span>
+                <span id="time">0s</span>
+            </div>
+        </div>
+
+        <div class="typing-area">
+            <div id="text-display" tabindex="0"></div>
+        </div>
     </div>
-
-    <script>
-        const words = [
-            // Most common words
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", 
-            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", 
-            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
-            
-            // Common verbs
-            "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
-            "so", "up", "out", "if", "about", "who", "get", "which", "go", "me",
-            
-            // Time-related
-            "when", "make", "can", "like", "time", "no", "just", "him", "know", "take",
-            "year", "day", "month", "morning", "night", "moment", "minute", "hour", "week", "now",
-            
-            // People and relationships
-            "people", "family", "friend", "father", "mother", "sister", "brother", "wife", "husband", "child",
-            "baby", "man", "woman", "girl", "boy", "parent", "kid", "teacher", "student", "person",
-            
-            // Actions and states
-            "work", "sleep", "eat", "drink", "walk", "run", "talk", "think", "feel", "see",
-            "hear", "look", "watch", "move", "stop", "start", "follow", "help", "turn", "play",
-            
-            // Common nouns
-            "house", "home", "room", "office", "car", "book", "table", "chair", "door", "window",
-            "bed", "kitchen", "bathroom", "phone", "computer", "food", "water", "money", "paper", "bag",
-            
-            // Abstract concepts
-            "life", "love", "time", "world", "way", "thing", "idea", "fact", "problem", "question",
-            "answer", "truth", "lie", "hope", "fear", "dream", "mind", "heart", "soul", "spirit",
-            
-            // Descriptive words
-            "good", "bad", "big", "small", "high", "low", "long", "short", "old", "new",
-            "young", "happy", "sad", "angry", "tired", "busy", "free", "hard", "soft", "strong",
-            
-            // Business and work
-            "business", "company", "work", "job", "office", "meeting", "project", "team", "client", "market",
-            "money", "price", "cost", "value", "quality", "service", "product", "industry", "economy", "trade",
-            
-            // Technology
-            "computer", "internet", "email", "website", "software", "program", "data", "system", "network", "device",
-            "phone", "mobile", "digital", "technology", "online", "web", "app", "video", "audio", "file",
-            
-            // Education
-            "school", "college", "university", "class", "course", "study", "student", "teacher", "lesson", "exam",
-            "test", "grade", "education", "knowledge", "learning", "training", "skill", "practice", "theory", "research",
-            
-            // Health and body
-            "health", "body", "head", "face", "eye", "ear", "nose", "mouth", "hand", "foot",
-            "heart", "brain", "blood", "pain", "doctor", "hospital", "medicine", "disease", "treatment", "care",
-            
-            // Places
-            "city", "town", "country", "state", "street", "road", "building", "house", "store", "shop",
-            "restaurant", "hotel", "airport", "station", "park", "garden", "beach", "mountain", "river", "sea",
-            
-            // Nature and environment
-            "water", "air", "fire", "earth", "sun", "moon", "star", "sky", "weather", "rain",
-            "snow", "wind", "tree", "flower", "plant", "animal", "bird", "fish", "dog", "cat",
-            
-            // Food and drink
-            "food", "drink", "meal", "breakfast", "lunch", "dinner", "meat", "fish", "vegetable", "fruit",
-            "bread", "rice", "coffee", "tea", "milk", "water", "juice", "wine", "beer", "sugar",
-            
-            // Clothing
-            "clothes", "shirt", "pants", "dress", "shoe", "hat", "coat", "jacket", "suit", "uniform",
-            "sock", "glove", "belt", "button", "zipper", "pocket", "fabric", "cotton", "wool", "leather",
-            
-            // Transportation
-            "car", "bus", "train", "plane", "bike", "boat", "ship", "truck", "vehicle", "traffic",
-            "driver", "passenger", "ticket", "trip", "travel", "journey", "route", "map", "direction", "distance",
-            
-            // Communication
-            "word", "language", "speech", "voice", "message", "call", "text", "letter", "email", "phone",
-            "talk", "speak", "tell", "ask", "answer", "write", "read", "listen", "understand", "mean",
-            
-            // Entertainment
-            "music", "movie", "game", "sport", "play", "dance", "song", "show", "party", "fun",
-            "art", "book", "story", "picture", "photo", "video", "radio", "television", "news", "media",
-            
-            // Emotions
-            "happy", "sad", "angry", "scared", "worried", "excited", "surprised", "tired", "bored", "interested",
-            "proud", "ashamed", "jealous", "grateful", "guilty", "lonely", "comfortable", "confident", "nervous", "calm"
-        ];
-
-        let currentText = "";
-        let currentIndex = 0;
-        let startTime = null;
-        let timerInterval = null;
-        let correctChars = 0;
-        let totalChars = 0;
-        let timeLeft = 15;
-
-        const textDisplay = document.getElementById("text-display");
-        const inputField = document.getElementById("input-field");
-        const wpmDisplay = document.getElementById("wpm");
-        const accuracyDisplay = document.getElementById("accuracy");
-        const timeDisplay = document.getElementById("time");
-
-        function generateText() {
-            let text = "";
-            for (let i = 0; i < 30; i++) {
-                text += words[Math.floor(Math.random() * words.length)] + " ";
-            }
-            return text.trim();
-        }
-
-        function updateDisplay() {
-            let displayText = "";
-            if (currentIndex > currentText.length - 20) {
-                currentText += " " + generateText();
-            }
-            
-            const relevantText = currentText.substring(
-                Math.max(0, currentIndex - 30),
-                Math.min(currentText.length, currentIndex + 50)
-            );
-            
-            const offset = Math.max(0, currentIndex - 30);
-            
-            for (let i = 0; i < relevantText.length; i++) {
-                const absoluteIndex = i + offset;
-                if (absoluteIndex === currentIndex) {
-                    displayText += '<span id="cursor"></span>';
-                }
-                if (absoluteIndex < currentIndex) {
-                    const correct = inputField.value[absoluteIndex] === currentText[absoluteIndex];
-                    displayText += `<span class="${correct ? 'correct' : 'incorrect'}">${relevantText[i]}</span>`;
-                } else {
-                    displayText += relevantText[i];
-                }
-            }
-            textDisplay.innerHTML = displayText;
-        }
-
-        function calculateWPM() {
-            const timeElapsed = (Date.now() - startTime) / 1000 / 60;
-            const wordsTyped = inputField.value.length / 5;
-            return Math.round(wordsTyped / timeElapsed);
-        }
-
-        function calculateAccuracy() {
-            return Math.round((correctChars / totalChars) * 100) || 100;
-        }
-
-        function startTest() {
-            currentText = generateText();
-            currentIndex = 0;
-            startTime = Date.now();
-            timeLeft = 15;
-            correctChars = 0;
-            totalChars = 0;
-            inputField.value = "";
-            updateDisplay();
-
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                timeDisplay.textContent = timeLeft + "s";
-                if (timeLeft <= 0) {
-                    endTest();
-                }
-            }, 1000);
-        }
-
-        function endTest() {
-            clearInterval(timerInterval);
-            inputField.blur();
-            alert(`Test complete!\nWPM: ${wpmDisplay.textContent}\nAccuracy: ${accuracyDisplay.textContent}`);
-            startTest();
-        }
-
-        inputField.addEventListener("input", () => {
-            if (!startTime) startTime = Date.now();
-
-            totalChars++;
-            if (inputField.value[currentIndex] === currentText[currentIndex]) {
-                correctChars++;
-            }
-
-            currentIndex = inputField.value.length;
-            updateDisplay();
-            wpmDisplay.textContent = calculateWPM();
-            accuracyDisplay.textContent = calculateAccuracy() + "%";
-        });
-
-        document.addEventListener("click", () => {
-            inputField.focus();
-        });
-
-        startTest();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
