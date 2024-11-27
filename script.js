@@ -82,7 +82,7 @@ class TypingTest {
     renderText() {
         this.textDisplay.innerHTML = this.currentText
             .split('')
-            .map(char => `<span class="char">${char === ' ' ? '␣' : char}</span>`)
+            .map(char => `<span class="char">${char === ' ' ? ' ' : char}</span>`)
             .join('');
         
         const firstChar = this.textDisplay.querySelector('.char');
