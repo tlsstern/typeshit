@@ -552,7 +552,8 @@ class TypingTest {
                         pointBorderColor: 'transparent',
                         pointHoverRadius: 6,
                         pointRadius: 4,
-                        borderWidth: 3
+                        borderWidth: 3,
+                        pointHitRadius: 20
                     }]
                 },
                 options: {
@@ -614,6 +615,12 @@ class TypingTest {
                                     return value + ' WPM';
                                 }
                             }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 6,
+                            radius: 4
                         }
                     }
                 }
