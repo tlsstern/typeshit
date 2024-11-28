@@ -132,6 +132,7 @@ select:hover, button:hover {
     transition: all 0.3s ease;
     position: relative;
     margin-bottom: 10px;
+    width: 100%;
 }
 
 .typing-area:focus-within {
@@ -539,60 +540,36 @@ select option {
     .container {
         padding: 2rem;
     }
-
-    .modal-content {
-        padding: 1.5rem;
-    }
-
-    .graph-section {
-        height: 200px;
-    }
-
-    .stat-value {
-        font-size: 1.5rem;
-    }
-
-    .stat-card {
-        padding: 0.8rem;
-    }
 }
 
-/* Add touch-specific styles */
-@media (hover: none) {
-    .char.active::after {
-        height: 100%;
-        opacity: 0.5;
+/* Add styles for larger screens */
+@media (min-width: 1024px) {
+    .container {
+        padding: 2rem;
     }
 
-    /* Increase touch targets */
-    select, button {
-        min-height: 44px;
-        padding: 10px 16px;
+    .typing-area {
+        padding: 25px;
+        min-height: 250px;
     }
 
-    #restart {
-        width: 44px;
-        height: 44px;
+    #text-display {
+        font-size: 1.3rem;
+        line-height: 1.8;
     }
-}
 
-/* Add styles for virtual keyboard support */
-.virtual-keyboard {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: var(--bg-color);
-    padding: 10px;
-    box-shadow: none;
-}
-
-.container.keyboard-visible {
-    padding-bottom: 60px;
+    .title h1 {
+        font-size: 3.5rem;
+    }
 }
 
 /* Update media queries for better responsiveness */
+@media (max-width: 1024px) {
+    #text-display {
+        font-size: 1.2rem;
+    }
+}
+
 @media (max-width: 768px) {
     .header {
         grid-template-columns: 1fr;
@@ -617,7 +594,6 @@ select option {
 
     .container {
         padding: 0.5rem;
-        height: 100vh;
     }
 
     .typing-area {
@@ -628,25 +604,6 @@ select option {
     #text-display {
         font-size: 1.1rem;
         line-height: 1.5;
-    }
-
-    .stat {
-        min-width: 60px;
-        padding: 0.3rem 0.6rem;
-    }
-
-    .modal-content {
-        width: 95%;
-        padding: 1.2rem;
-        gap: 1.2rem;
-    }
-
-    .graph-section {
-        height: 200px;
-    }
-
-    .stat-value {
-        font-size: 1.2rem;
     }
 }
 
@@ -672,68 +629,22 @@ select option {
         font-size: 1rem;
         line-height: 1.4;
     }
-
-    .stat {
-        min-width: 50px;
-        padding: 0.2rem 0.4rem;
-        font-size: 0.8rem;
-    }
-
-    .stat span {
-        font-size: 1rem;
-    }
-
-    select, button {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-    }
-
-    .modal-content {
-        width: 98%;
-        padding: 1rem;
-        gap: 1rem;
-    }
-
-    .graph-section {
-        height: 180px;
-    }
-
-    .stats-container {
-        gap: 0.5rem;
-    }
-
-    .stat-card {
-        padding: 0.8rem 0.5rem;
-    }
-
-    .stat-value {
-        font-size: 1.1rem;
-    }
-
-    .stat-label {
-        font-size: 0.7rem;
-    }
 }
 
-/* Add styles for larger screens */
-@media (min-width: 1024px) {
-    .container {
-        padding: 2rem;
-    }
+/* Add styles for virtual keyboard support */
+.virtual-keyboard {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--bg-color);
+    padding: 10px;
+    box-shadow: none;
+}
 
-    .typing-area {
-        padding: 25px;
-        min-height: 250px;
-    }
-
-    #text-display {
-        font-size: 1.3rem;
-        line-height: 1.8;
-    }
-
-    .title h1 {
-        font-size: 3.5rem;
-    }
+.container.keyboard-visible {
+    padding-bottom: 60px;
 }
 
 /* Update icon styles */
@@ -830,5 +741,21 @@ select option {
 @media (max-width: 480px) {
     .modal-title h1 {
         font-size: 1.8rem;
+    }
+}
+
+/* Add responsive adjustments */
+@media (max-width: 768px) {
+    #text-display {
+        font-size: 1.1rem; /* Slightly smaller font on medium screens */
+    }
+}
+
+@media (max-width: 480px) {
+    #text-display {
+        font-size: 1rem; /* Even smaller font on mobile */
+    }
+    .typing-area {
+        padding: 15px; /* Less padding on mobile */
     }
 } 

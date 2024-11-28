@@ -1,45 +1,31 @@
 class TypingTest {
     constructor() {
         this.words = [
-            "us", "time", "day", "year", "now", "month", "week", "hour", "minute", "second",
-            "morning", "evening", "night", "today", "tomorrow", "yesterday", "soon", "later", "early", "late",
-            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
-            "many", "much", "few", "several", "some", "any", "all", "both", "each", "every",
-            "happy", "sad", "angry", "tired", "excited", "scared", "worried", "surprised", "confused", "proud",
-            "love", "hate", "like", "feel", "think", "know", "want", "need", "hope", "wish",
-            "family", "friend", "mother", "father", "parent", "child", "baby", "sister", "brother", "wife",
-            "husband", "son", "daughter", "uncle", "aunt", "cousin", "grandmother", "grandfather", "person", "people",
-            "home", "house", "room", "office", "school", "work", "store", "shop", "market", "restaurant",
-            "city", "town", "country", "world", "place", "area", "street", "road", "building", "garden",
-            "food", "water", "drink", "meal", "breakfast", "lunch", "dinner", "fruit", "vegetable", "meat",
-            "bread", "rice", "fish", "chicken", "beef", "pork", "egg", "milk", "coffee", "tea",
-            "red", "blue", "green", "yellow", "black", "white", "brown", "pink", "purple", "orange",
-            "gray", "silver", "gold", "dark", "light", "bright", "color", "shade", "tone", "hue",
-            "weather", "rain", "snow", "wind", "sun", "cloud", "storm", "hot", "cold", "warm",
-            "cool", "tree", "flower", "grass", "sky", "sea", "ocean", "river", "mountain", "beach",
-            "car", "bus", "train", "plane", "bike", "walk", "run", "drive", "ride", "fly",
-            "travel", "trip", "journey", "way", "road", "street", "path", "direction", "map", "route",
-            "computer", "phone", "internet", "email", "website", "online", "data", "system", "program", "software",
-            "app", "game", "video", "music", "picture", "camera", "screen", "device", "machine", "tool",
-            "work", "job", "career", "study", "learn", "teach", "student", "teacher", "class", "lesson",
-            "test", "exam", "grade", "paper", "book", "note", "write", "read", "speak", "listen",
-            "head", "face", "eye", "ear", "nose", "mouth", "tooth", "hair", "hand", "arm",
-            "leg", "foot", "body", "back", "heart", "brain", "skin", "bone", "muscle", "blood",
-            "clothes", "shirt", "pants", "dress", "shoe", "hat", "coat", "jacket", "sock", "belt",
-            "wear", "fit", "size", "style", "fashion", "design", "pattern", "color", "material", "fabric",
-            "make", "do", "take", "give", "get", "put", "set", "move", "turn", "change",
-            "open", "close", "start", "stop", "begin", "end", "come", "go", "leave", "return",
-            "say", "tell", "ask", "answer", "speak", "talk", "call", "write", "read", "listen",
-            "hear", "see", "look", "watch", "show", "mean", "explain", "understand", "know", "think",
-            "good", "bad", "big", "small", "high", "low", "long", "short", "old", "new",
-            "young", "different", "same", "right", "wrong", "true", "false", "important", "real", "best",
-            "thing", "way", "day", "man", "woman", "child", "world", "life", "time", "year",
-            "hand", "part", "eye", "place", "work", "week", "case", "point", "government", "company",
-            "could", "would", "should", "may", "might", "must", "shall", "will", "can", "need",
-            "try", "call", "ask", "seem", "feel", "become", "leave", "put", "mean", "keep",
-            "each", "well", "just", "while", "where", "why", "who", "whose", "which", "what",
-            "when", "then", "there", "here", "those", "these", "that", "this", "they", "them"
-            // Add more words to reach 1000 if needed
+            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I",
+            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
+            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
+            "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
+            "so", "up", "out", "if", "about", "who", "get", "which", "go", "me",
+            "when", "make", "can", "like", "time", "no", "just", "him", "know", "take",
+            "people", "into", "year", "your", "good", "some", "could", "them", "see", "other",
+            "than", "then", "now", "look", "only", "come", "its", "over", "think", "also",
+            "back", "after", "use", "two", "how", "our", "work", "first", "well", "way",
+            "even", "new", "want", "because", "any", "these", "give", "day", "most", "us",
+            "is", "was", "were", "been", "has", "had", "are", "said", "did", "can't",
+            "each", "under", "name", "very", "through", "just", "form", "much", "great", "before",
+            "where", "must", "such", "child", "last", "should", "right", "old", "too", "does",
+            "tell", "sentence", "set", "three", "want", "air", "play", "small", "end", "put",
+            "home", "read", "hand", "port", "large", "spell", "add", "land", "here", "big",
+            "high", "such", "follow", "act", "why", "ask", "men", "change", "went", "light",
+            "kind", "off", "need", "house", "picture", "try", "again", "animal", "point", "mother",
+            "world", "near", "build", "self", "earth", "father", "head", "stand", "own", "page",
+            "should", "country", "found", "answer", "school", "grow", "study", "still", "learn", "plant",
+            "cover", "food", "sun", "four", "between", "state", "keep", "eye", "never", "let",
+            "thought", "city", "tree", "cross", "farm", "hard", "start", "might", "story", "saw",
+            "far", "sea", "draw", "left", "late", "run", "don't", "while", "press", "close",
+            "night", "real", "life", "few", "north", "book", "carry", "took", "science", "eat",
+            "room", "friend", "began", "idea", "fish", "mountain", "stop", "once", "base", "hear",
+            "horse", "cut", "sure", "watch", "color", "face", "wood", "main", "open", "seem"
         ];
         
         this.textDisplay = document.getElementById('text-display');
@@ -67,7 +53,8 @@ class TypingTest {
 
         this.currentText = '';
         this.linesPerView = 5;
-        this.charsPerLine = 79;
+        this.charsPerLine = 76;
+        this.updateCharsPerLine();
         this.visibleTextStart = 0;
         this.statsTimer = null;
         this.themeSelect = document.getElementById('themeSelect');
@@ -241,6 +228,12 @@ class TypingTest {
         if (this.isMobile) {
             this.initializeMobileSupport();
         }
+
+        // Add resize listener
+        window.addEventListener('resize', () => {
+            this.updateCharsPerLine();
+            this.renderText();
+        });
     }
 
     initializeEventListeners() {
@@ -732,6 +725,39 @@ class TypingTest {
                 container.classList.remove('keyboard-visible');
             }
         });
+    }
+
+    updateCharsPerLine() {
+        const container = document.querySelector('.typing-area');
+        const containerWidth = container.clientWidth;
+        const maxChars = 77; // Maximum for large screens
+        
+        if (window.innerWidth <= 770) {
+            // Create a smoother decline from 770px down
+            // At 770px it will be 65 chars
+            // At 320px (minimum mobile width) it will be about 45 chars
+            const minWidth = 320;
+            const minChars = 45; // Reduced minimum chars
+            const maxCharsSmall = 65; // Maximum chars for smaller screens
+            
+            // Calculate percentage of width between 770 and 320
+            const widthRange = 770 - minWidth;
+            const currentWidth = window.innerWidth - minWidth;
+            const percentage = Math.max(0, Math.pow(currentWidth / widthRange, 0.8));
+            
+            // Calculate chars based on percentage
+            const charRange = maxCharsSmall - minChars;
+            this.charsPerLine = Math.floor(minChars + (charRange * percentage));
+        } else if (window.innerWidth <= 1024) {
+            // Smooth transition between 1024 and 770
+            const percentage = (window.innerWidth - 770) / (1024 - 770);
+            this.charsPerLine = Math.floor(65 + (maxChars - 65) * percentage);
+        } else {
+            this.charsPerLine = maxChars;
+        }
+        
+        // Ensure we never go below minimum chars per line
+        this.charsPerLine = Math.max(45, this.charsPerLine);
     }
 }
 
