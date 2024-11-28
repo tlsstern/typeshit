@@ -232,6 +232,15 @@ class TypingTest {
         this.wpmHistory = [];
         this.lastWpmUpdate = null;
         this.lastWord = '';
+
+        // Add after existing constructor properties
+        this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        this.virtualKeyboard = document.getElementById('virtualKeyboard');
+        this.mobileInput = document.getElementById('mobileInput');
+        
+        if (this.isMobile) {
+            this.initializeMobileSupport();
+        }
     }
 
     initializeEventListeners() {
@@ -405,6 +414,11 @@ class TypingTest {
         this.currentIndex++;
         this.totalChars++;
 
+        // Vibrate on mobile for feedback (if available)
+        if (this.isMobile && navigator.vibrate) {
+            navigator.vibrate(10);
+        }
+
         // Add more text if needed
         if (this.currentIndex >= this.currentText.length - (this.charsPerLine * 2)) {
             this.currentText += ' ' + this.generateWords(20).join(' ');
@@ -425,6 +439,10 @@ class TypingTest {
         
         // Make the typing area focusable
         this.typingArea.setAttribute('tabindex', '-1');
+
+        if (this.isMobile) {
+            this.mobileInput.focus();
+        }
     }
 
     updateTime() {
@@ -653,6 +671,34 @@ class TypingTest {
         this.wpmHistory.push({
             time: timeElapsed * 60, // convert to seconds
             wpm: currentWPM
+        });
+    }
+
+    initializeMobileSupport() {
+        // Handle mobile input
+        this.mobileInput.addEventListener('input', (e) => {
+            const inputChar = e.data;
+            if (inputChar && this.isTestActive) {
+                this.checkCharacter(inputChar);
+            }
+            this.mobileInput.value = ''; // Clear input after each character
+        });
+
+        // Handle mobile keyboard show/hide
+        this.typingArea.addEventListener('touchstart', () => {
+            if (!this.isTestActive) {
+                this.mobileInput.focus();
+            }
+        });
+
+        // Adjust container padding when keyboard shows/hides
+        window.visualViewport.addEventListener('resize', () => {
+            const container = document.querySelector('.container');
+            if (window.visualViewport.height < window.innerHeight) {
+                container.classList.add('keyboard-visible');
+            } else {
+                container.classList.remove('keyboard-visible');
+            }
         });
     }
 }
