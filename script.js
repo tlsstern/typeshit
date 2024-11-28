@@ -22,7 +22,7 @@ class TypingTest {
             "should", "country", "found", "answer", "school", "grow", "study", "still", "learn", "plant",
             "cover", "food", "sun", "four", "between", "state", "keep", "eye", "never", "let",
             "thought", "city", "tree", "cross", "farm", "hard", "start", "might", "story", "saw",
-            "far", "sea", "draw", "left", "late", "run", "don't", "while", "press", "close",
+            "far", "sea", "draw", "left", "late", "run", "dont", "while", "press", "close",
             "night", "real", "life", "few", "north", "book", "carry", "took", "science", "eat",
             "room", "friend", "began", "idea", "fish", "mountain", "stop", "once", "base", "hear",
             "horse", "cut", "sure", "watch", "color", "face", "wood", "main", "open", "seem"
