@@ -11,7 +11,7 @@ class TypingTest {
             "than", "then", "now", "look", "only", "come", "its", "over", "think", "also",
             "back", "after", "use", "two", "how", "our", "work", "first", "well", "way",
             "even", "new", "want", "because", "any", "these", "give", "day", "most", "us",
-            "is", "was", "were", "been", "has", "had", "are", "said", "did", 
+            "is", "was", "were", "been", "has", "had", "are", "said", "did", "monkey",
             "each", "under", "name", "very", "through", "just", "form", "much", "great", "before",
             "where", "must", "such", "child", "last", "should", "right", "old", "too", "does",
             "tell", "sentence", "set", "three", "want", "air", "play", "small", "end", "put",
