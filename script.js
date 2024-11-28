@@ -1,7 +1,7 @@
 class TypingTest {
     constructor() {
         this.words = [
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I",
+            "the", "be", "to", "of", "and", "a", "in", "that", "have", "i",
             "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
             "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
             "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
@@ -11,7 +11,7 @@ class TypingTest {
             "than", "then", "now", "look", "only", "come", "its", "over", "think", "also",
             "back", "after", "use", "two", "how", "our", "work", "first", "well", "way",
             "even", "new", "want", "because", "any", "these", "give", "day", "most", "us",
-            "is", "was", "were", "been", "has", "had", "are", "said", "did", "can't",
+            "is", "was", "were", "been", "has", "had", "are", "said", "did", 
             "each", "under", "name", "very", "through", "just", "form", "much", "great", "before",
             "where", "must", "such", "child", "last", "should", "right", "old", "too", "does",
             "tell", "sentence", "set", "three", "want", "air", "play", "small", "end", "put",
