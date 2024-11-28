@@ -234,6 +234,10 @@ class TypingTest {
             this.updateCharsPerLine();
             this.renderText();
         });
+
+        // Add new property
+        this.statsContainer = document.querySelector('.stats');
+        this.statsContainer.classList.remove('visible'); // Ensure stats start hidden
     }
 
     initializeEventListeners() {
@@ -450,10 +454,17 @@ class TypingTest {
     }
 
     startTest() {
+        if (this.isTestActive) return; // Prevent multiple starts
+        
         this.isTestActive = true;
         this.startTime = new Date();
         this.timer = setInterval(() => this.updateTime(), 1000);
         this.statsTimer = setInterval(() => this.updateStats(), 100);
+        
+        // Show stats immediately when typing starts
+        requestAnimationFrame(() => {
+            this.statsContainer.classList.add('visible');
+        });
         
         // Focus on the typing area
         this.typingArea.focus();
@@ -679,6 +690,10 @@ class TypingTest {
         this.timeDisplay.textContent = this.timeLimit + 's';
         this.wpmDisplay.textContent = '0';
         this.accuracyDisplay.textContent = '0%';
+        
+        // Ensure stats are hidden on restart
+        this.statsContainer.classList.remove('visible');
+        
         this.generateInitialText();
     }
 

@@ -80,24 +80,38 @@ body {
     gap: 20px;
     justify-content: center;
     flex-wrap: wrap;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.stats.visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .stat {
-    flex: 1;
-    min-width: 80px;
-    font-size: 0.9rem;
-    background: linear-gradient(145deg, var(--bg-color), var(--header-bg));
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.stats.visible .stat {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 
-.stat span {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: var(--text-color);
-    margin-top: 0;
+.stat .label {
+    margin-right: 4px;
+}
+
+.stats.visible .stat .label {
+    margin-right: 0;
+    margin-bottom: 4px;
 }
 
 #timeSelect {
