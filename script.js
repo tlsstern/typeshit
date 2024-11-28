@@ -241,7 +241,8 @@ class TypingTest {
             // Handle Tab key
             if (e.key === 'Tab') {
                 e.preventDefault(); // Prevent default tab behavior
-                this.restartBtn.focus(); // Focus the restart button
+                this.restartBtn.focus();    
+                
                 return;
             }
 
@@ -342,7 +343,7 @@ class TypingTest {
         let lines = [];
         let currentLine = '';
         
-        // Build lines word by word with more characters per line
+        // Build lines word by word
         for (let word of words) {
             // Check if adding the word (plus a space) would exceed line length
             if (currentLine.length === 0 || (currentLine + ' ' + word).length <= this.charsPerLine) {
@@ -352,11 +353,16 @@ class TypingTest {
                 // Push current line and start new line with current word
                 lines.push(currentLine);
                 currentLine = word;
+                
+                // Break if we've reached 5 lines
+                if (lines.length >= 5) {
+                    break;
+                }
             }
         }
         
-        // Don't forget the last line
-        if (currentLine) {
+        // Add the last line if we haven't reached 5 lines yet
+        if (currentLine && lines.length < 5) {
             lines.push(currentLine);
         }
 
@@ -368,10 +374,7 @@ class TypingTest {
             .reduce((count, line) => count + line.length + 1, 0);
         
         // Show appropriate lines
-        const visibleChars = allChars.slice(
-            this.visibleTextStart,
-            this.visibleTextStart + (this.linesPerView * (this.charsPerLine + 1)) // Added +1 to account for newline
-        );
+        const visibleChars = allChars;
         
         this.textDisplay.innerHTML = visibleChars.map((char, index) => {
             const globalIndex = index + this.visibleTextStart;
@@ -732,22 +735,26 @@ class TypingTest {
         const containerWidth = container.clientWidth;
         const maxChars = 77; // Maximum for large screens
         
-        if (window.innerWidth <= 770) {
-            // Create a smoother decline from 770px down
-            // At 770px it will be 65 chars
-            // At 320px (minimum mobile width) it will be about 45 chars
+        if (window.innerWidth <= 440) {
+            // Extra small screens (phones)
+            // At 440px it will be 50 chars
+            // At 320px it will be about 35 chars
             const minWidth = 320;
-            const minChars = 45; // Reduced minimum chars
-            const maxCharsSmall = 65; // Maximum chars for smaller screens
+            const minChars = 35;
+            const maxCharsXSmall = 50;
             
-            // Calculate percentage of width between 770 and 320
-            const widthRange = 770 - minWidth;
+            const widthRange = 440 - minWidth;
             const currentWidth = window.innerWidth - minWidth;
             const percentage = Math.max(0, Math.pow(currentWidth / widthRange, 0.8));
             
-            // Calculate chars based on percentage
-            const charRange = maxCharsSmall - minChars;
+            const charRange = maxCharsXSmall - minChars;
             this.charsPerLine = Math.floor(minChars + (charRange * percentage));
+        } else if (window.innerWidth <= 770) {
+            // Create a smoother decline from 770px down to 440px
+            // At 770px it will be 65 chars
+            // At 440px it will be 50 chars
+            const percentage = (window.innerWidth - 440) / (770 - 440);
+            this.charsPerLine = Math.floor(50 + (65 - 50) * percentage);
         } else if (window.innerWidth <= 1024) {
             // Smooth transition between 1024 and 770
             const percentage = (window.innerWidth - 770) / (1024 - 770);
@@ -757,7 +764,7 @@ class TypingTest {
         }
         
         // Ensure we never go below minimum chars per line
-        this.charsPerLine = Math.max(45, this.charsPerLine);
+        this.charsPerLine = Math.max(35, this.charsPerLine);
     }
 }
 
