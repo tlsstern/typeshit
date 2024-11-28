@@ -67,7 +67,7 @@ class TypingTest {
 
         this.currentText = '';
         this.linesPerView = 5;
-        this.charsPerLine = 60;
+        this.charsPerLine = 79;
         this.visibleTextStart = 0;
         this.statsTimer = null;
         this.themeSelect = document.getElementById('themeSelect');
@@ -345,19 +345,39 @@ class TypingTest {
     }
 
     renderText() {
-        const allChars = this.currentText.split('');
+        const words = this.currentText.split(' ');
+        let lines = [];
+        let currentLine = '';
         
-        // Calculate current line
-        this.currentLine = Math.floor(this.currentIndex / this.charsPerLine);
-        
-        // If we're past the first line, adjust visibleTextStart to keep cursor on second line
-        if (this.currentLine > 0) {
-            this.visibleTextStart = (this.currentLine - 1) * this.charsPerLine;
+        // Build lines word by word with more characters per line
+        for (let word of words) {
+            // Check if adding the word (plus a space) would exceed line length
+            if (currentLine.length === 0 || (currentLine + ' ' + word).length <= this.charsPerLine) {
+                // Add space only if it's not the start of a line
+                currentLine += (currentLine.length > 0 ? ' ' : '') + word;
+            } else {
+                // Push current line and start new line with current word
+                lines.push(currentLine);
+                currentLine = word;
+            }
         }
         
+        // Don't forget the last line
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+
+        // Join lines with proper spacing and create character spans
+        const allChars = lines.join('\n').split('');
+        
+        // Calculate current line based on character index
+        this.currentLine = lines.slice(0, this.visibleTextStart)
+            .reduce((count, line) => count + line.length + 1, 0);
+        
+        // Show appropriate lines
         const visibleChars = allChars.slice(
-            this.visibleTextStart, 
-            this.visibleTextStart + (this.linesPerView * this.charsPerLine)
+            this.visibleTextStart,
+            this.visibleTextStart + (this.linesPerView * (this.charsPerLine + 1)) // Added +1 to account for newline
         );
         
         this.textDisplay.innerHTML = visibleChars.map((char, index) => {
@@ -372,6 +392,11 @@ class TypingTest {
                 }
             } else if (globalIndex === this.currentIndex) {
                 classes.push('active');
+            }
+            
+            // Replace newline characters with <br> tags
+            if (char === '\n') {
+                return '<br>';
             }
             
             return `<span class="${classes.join(' ')}">${char}</span>`;
