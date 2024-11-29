@@ -428,6 +428,28 @@ class TypingTest {
     checkCharacter(key) {
         if (!this.isTestActive || this.resultsModal.style.display === 'flex') return;
         
+        // Handle space key to skip to next word
+        if (key === ' ') {
+            // Find the next space in the text
+            let nextSpaceIndex = this.currentText.indexOf(' ', this.currentIndex);
+            if (nextSpaceIndex === -1) return; // No more spaces found
+            
+            // Mark skipped characters as incorrect
+            while (this.currentIndex < nextSpaceIndex) {
+                this.mistakes.add(this.currentIndex);
+                this.currentIndex++;
+                this.totalChars++;
+            }
+            
+            // Handle the space character itself
+            this.currentIndex++;
+            this.totalChars++;
+            
+            this.renderText();
+            this.updateStats();
+            return;
+        }
+
         const currentChar = this.currentText[this.currentIndex];
         
         if (key === currentChar) {
@@ -512,24 +534,30 @@ class TypingTest {
         clearInterval(this.timer);
         clearInterval(this.statsTimer);
         this.isTestActive = false;
-        this.showResultsModal();
+        
+        // Calculate final stats before showing modal
+        const timeElapsed = this.timeLimit / 60; // Convert seconds to minutes
+        const finalWpm = Math.round((this.correctChars / 5) / timeElapsed);
+        const finalAccuracy = this.totalChars > 0 
+            ? Math.round((this.correctChars / this.totalChars) * 100) 
+            : 0;
+        
+        // Take final snapshot of WPM history
+        const finalWpmHistory = [...this.wpmHistory];
+        
+        // Show results with final data
+        this.showResultsModal(finalWpm, finalAccuracy, finalWpmHistory);
     }
 
-    showResultsModal() {
+    showResultsModal(finalWpm, finalAccuracy, finalWpmHistory) {
         // Add hide class to container for smooth transition
         document.querySelector('.container').classList.add('hide');
         
         // Wait for container transition before showing modal
         setTimeout(() => {
-            const timeElapsed = this.timeLimit / 60; // Convert seconds to minutes
-            const wpm = Math.round((this.correctChars / 5) / timeElapsed);
-            const accuracy = this.totalChars > 0 
-                ? Math.round((this.correctChars / this.totalChars) * 100) 
-                : 0;
-
-            // Update display
-            this.wpmResult.textContent = wpm;
-            this.accuracyResult.textContent = `${accuracy}%`;
+            // Update display with final stats
+            this.wpmResult.textContent = finalWpm;
+            this.accuracyResult.textContent = `${finalAccuracy}%`;
             this.totalCharsResult.textContent = this.totalChars;
             this.correctCharsResult.textContent = this.correctChars;
             this.incorrectCharsResult.textContent = this.totalChars - this.correctChars;
@@ -540,7 +568,7 @@ class TypingTest {
                 existingChart.destroy();
             }
 
-            // Prepare data for the graph
+            // Prepare data for the graph using final WPM history
             const labels = [];
             const data = [];
             const totalTime = this.timeLimit;
@@ -551,12 +579,12 @@ class TypingTest {
                 labels.push(i * 10 + '%');
                 
                 // Find the closest WPM data point for this time
-                const closestPoint = this.wpmHistory.reduce((closest, point) => {
+                const closestPoint = finalWpmHistory.reduce((closest, point) => {
                     if (Math.abs(point.time - timePoint) < Math.abs(closest.time - timePoint)) {
                         return point;
                     }
                     return closest;
-                }, this.wpmHistory[0] || { time: 0, wpm: 0 });
+                }, finalWpmHistory[0] || { time: 0, wpm: 0 });
                 
                 data.push(closestPoint ? closestPoint.wpm : 0);
             }
