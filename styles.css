@@ -259,8 +259,9 @@ select:hover, button:hover {
     display: inline-block;
     color: var(--text-color);
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    transition: all 0.5s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: gentlePulse 4s ease-in-out infinite;
+    transition: opacity 0.2s ease;
 }
 
 .title h1::after {
@@ -800,4 +801,38 @@ l
     .typing-area {
         padding: 15px; /* Less padding on mobile */
     }
-} 
+}
+
+.title h1.title-change {
+    transform: translateY(-20px);
+    opacity: 0;
+}
+
+@keyframes titleSwap {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    51% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Remove these styles as they're no longer needed */
+.caps-lock-indicator,
+.caps-lock-indicator.visible,
+.caps-lock-indicator .material-icons,
+.caps-lock-indicator .caps-text,
+.hidden {
+    display: none;
+}
+  

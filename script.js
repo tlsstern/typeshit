@@ -298,6 +298,22 @@ class TypingTest {
         // Add new property
         this.statsContainer = document.querySelector('.stats');
         this.statsContainer.classList.remove('visible'); // Ensure stats start hidden
+
+        this.titleElement = document.querySelector('.title h1');
+        this.originalTitle = this.titleElement.textContent;
+        
+        // Simple caps lock detection and title change
+        document.addEventListener('keydown', (e) => {
+            if (e.getModifierState('CapsLock')) {
+                this.titleElement.textContent = 'CAPSLOCK';
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (!e.getModifierState('CapsLock')) {
+                this.titleElement.textContent = this.originalTitle;
+            }
+        });
     }
 
     initializeEventListeners() {
