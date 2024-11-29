@@ -511,10 +511,11 @@ class TypingTest {
     }
 
     updateStats() {
-        if (!this.startTime) return;
+        // Add early return if test is not active or WPM history is null
+        if (!this.startTime || !this.isTestActive || this.wpmHistory === null) return;
         
         const now = new Date();
-        const timeElapsed = (now - this.startTime) / 1000 / 60; // in minutes
+        const timeElapsed = (now - this.startTime) / 1000 / 60;
         const wpm = Math.round((this.correctChars / 5) / timeElapsed) || 0;
         const accuracy = this.totalChars > 0 
             ? Math.round((this.correctChars / this.totalChars) * 100) 
@@ -523,27 +524,29 @@ class TypingTest {
         this.wpmDisplay.textContent = wpm;
         this.accuracyDisplay.textContent = accuracy + '%';
 
-        // Record WPM every second
-        if (!this.lastWpmUpdate || (now - this.lastWpmUpdate) >= 1000) {
+        // Record WPM only if test is still active
+        if (this.isTestActive && (!this.lastWpmUpdate || (now - this.lastWpmUpdate) >= 1000)) {
             this.recordWPM();
             this.lastWpmUpdate = now;
         }
     }
 
     endTest() {
+        // Clear all timers immediately
         clearInterval(this.timer);
         clearInterval(this.statsTimer);
         this.isTestActive = false;
         
-        // Calculate final stats before showing modal
-        const timeElapsed = this.timeLimit / 60; // Convert seconds to minutes
+        // Calculate final stats
+        const timeElapsed = this.timeLimit / 60;
         const finalWpm = Math.round((this.correctChars / 5) / timeElapsed);
         const finalAccuracy = this.totalChars > 0 
             ? Math.round((this.correctChars / this.totalChars) * 100) 
             : 0;
         
-        // Take final snapshot of WPM history
+        // Take final snapshot of WPM history and prevent further updates
         const finalWpmHistory = [...this.wpmHistory];
+        this.wpmHistory = null; // Prevent further updates
         
         // Show results with final data
         this.showResultsModal(finalWpm, finalAccuracy, finalWpmHistory);
