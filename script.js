@@ -530,31 +530,38 @@ class TypingTest {
 
     checkCharacter(key) {
         if (!this.isTestActive || this.resultsModal.style.display === 'flex') return;
-        
-        // Handle space key to skip to next word
+
+        const currentChar = this.currentText[this.currentIndex];
+
+        // Handle space key
         if (key === ' ') {
-            // Find the next space in the text
-            let nextSpaceIndex = this.currentText.indexOf(' ', this.currentIndex);
-            if (nextSpaceIndex === -1) return; // No more spaces found
-            
-            // Mark skipped characters as incorrect
-            while (this.currentIndex < nextSpaceIndex) {
-                this.mistakes.add(this.currentIndex);
+            if (currentChar === ' ') {
+                // If space is correct, increment correctChars
+                this.correctChars++;
+                this.currentIndex++;
+                this.totalChars++;
+            } else {
+                // Skip to next word if space is pressed at wrong time
+                let nextSpaceIndex = this.currentText.indexOf(' ', this.currentIndex);
+                if (nextSpaceIndex === -1) return;
+                
+                // Mark skipped characters as mistakes
+                while (this.currentIndex < nextSpaceIndex) {
+                    this.mistakes.add(this.currentIndex);
+                    this.currentIndex++;
+                    this.totalChars++;
+                }
+                // Move past the space
                 this.currentIndex++;
                 this.totalChars++;
             }
-            
-            // Handle the space character itself
-            this.currentIndex++;
-            this.totalChars++;
             
             this.renderText();
             this.updateStats();
             return;
         }
 
-        const currentChar = this.currentText[this.currentIndex];
-        
+        // Handle other characters
         if (key === currentChar) {
             this.correctChars++;
         } else {
