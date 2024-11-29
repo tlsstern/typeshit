@@ -835,4 +835,62 @@ l
 .hidden {
     display: none;
 }
-  
+
+/* Add these new styles */
+#mobileInput {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    opacity: 0;
+    padding: 0;
+    border: none;
+    pointer-events: none;
+}
+
+.container.keyboard-visible {
+    padding-bottom: 60vh; /* Adjust for keyboard height */
+}
+
+/* Update existing media queries */
+@media (max-width: 768px) {
+    .typing-area {
+        padding: 15px;
+        min-height: 120px;
+        touch-action: manipulation; /* Improve touch handling */
+    }
+
+    #text-display {
+        font-size: 1.1rem;
+        line-height: 1.5;
+    }
+
+    /* Adjust stats display for mobile */
+    .stats {
+        flex-wrap: wrap;
+        justify-content: space-around;
+        gap: 10px;
+    }
+
+    .stat {
+        min-width: auto;
+        flex: 0 1 calc(33.33% - 10px);
+    }
+}
+
+@media (max-width: 480px) {
+    .typing-area {
+        padding: 10px;
+    }
+
+    #text-display {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    /* Further adjust stats for smaller screens */
+    .stat {
+        flex: 0 1 calc(50% - 10px);
+    }
+}

@@ -282,10 +282,16 @@ class TypingTest {
 
         // Add after existing constructor properties
         this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        this.virtualKeyboard = document.getElementById('virtualKeyboard');
-        this.mobileInput = document.getElementById('mobileInput');
+        this.mobileInput = document.createElement('input');
+        this.mobileInput.id = 'mobileInput';
+        this.mobileInput.type = 'text';
+        this.mobileInput.autocomplete = 'off';
+        this.mobileInput.autocorrect = 'off';
+        this.mobileInput.autocapitalize = 'off';
+        this.mobileInput.spellcheck = false;
         
         if (this.isMobile) {
+            this.typingArea.appendChild(this.mobileInput);
             this.initializeMobileSupport();
         }
 
@@ -868,14 +874,14 @@ class TypingTest {
             this.mobileInput.value = ''; // Clear input after each character
         });
 
-        // Handle mobile keyboard show/hide
+        // Focus mobile input when typing area is tapped
         this.typingArea.addEventListener('touchstart', () => {
             if (!this.isTestActive) {
                 this.mobileInput.focus();
             }
         });
 
-        // Adjust container padding when keyboard shows/hides
+        // Handle keyboard show/hide
         window.visualViewport.addEventListener('resize', () => {
             const container = document.querySelector('.container');
             if (window.visualViewport.height < window.innerHeight) {
