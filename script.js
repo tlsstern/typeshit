@@ -166,6 +166,66 @@ class TypingTest {
                 '--cursor-color': '#90ee90',
                 '--button-bg': '#2a321f',
                 '--button-hover-bg': '#3a422f'
+            },
+            light: {
+                '--bg-color': '#f5f5f5',
+                '--text-color': '#2a2a2a',
+                '--header-bg': '#ffffff',
+                '--typing-area-bg': '#ffffff',
+                '--char-color': '#999999',
+                '--correct-color': '#4caf50',
+                '--incorrect-color': '#f44336',
+                '--cursor-color': '#2196f3',
+                '--button-bg': '#e0e0e0',
+                '--button-hover-bg': '#d0d0d0'
+            },
+            pastel: {
+                '--bg-color': '#fce4ec',
+                '--text-color': '#4a4a4a',
+                '--header-bg': '#fff0f5',
+                '--typing-area-bg': '#fff0f5',
+                '--char-color': '#b39ddb',
+                '--correct-color': '#81c784',
+                '--incorrect-color': '#e57373',
+                '--cursor-color': '#90caf9',
+                '--button-bg': '#f8bbd0',
+                '--button-hover-bg': '#f48fb1'
+            },
+            mint: {
+                '--bg-color': '#e0f2f1',
+                '--text-color': '#004d40',
+                '--header-bg': '#f1f8f7',
+                '--typing-area-bg': '#f1f8f7',
+                '--char-color': '#80cbc4',
+                '--correct-color': '#00897b',
+                '--incorrect-color': '#e57373',
+                '--cursor-color': '#26a69a',
+                '--button-bg': '#b2dfdb',
+                '--button-hover-bg': '#80cbc4'
+            },
+            sunshine: {
+                '--bg-color': '#fff8e1',
+                '--text-color': '#f57f17',
+                '--header-bg': '#fffdf7',
+                '--typing-area-bg': '#fffdf7',
+                '--char-color': '#ffd54f',
+                '--correct-color': '#ffa000',
+                '--incorrect-color': '#ff7043',
+                '--cursor-color': '#ffc107',
+                '--button-bg': '#ffe082',
+                '--button-hover-bg': '#ffd54f'
+            },
+            lavender: {
+                '--bg-color': '#f3e5f5',
+                '--text-color': '#4a148c',
+                '--header-bg': '#f8f0fa',
+                '--typing-area-bg': '#f8f0fa',
+                '--char-color': '#ce93d8',
+                '--correct-color': '#9c27b0',
+                '--incorrect-color': '#ec407a',
+                '--cursor-color': '#ab47bc',
+                '--button-bg': '#e1bee7',
+                '--button-hover-bg': '#ce93d8'
             }
         };
 
