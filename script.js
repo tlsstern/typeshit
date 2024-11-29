@@ -268,7 +268,7 @@ class TypingTest {
             if (e.key === 'Backspace') {
                 e.preventDefault();
                 if (this.isTestActive && this.currentIndex > 0) {
-                    this.handleBackspace();
+                    this.handleBackspace(e.ctrlKey);
                 }
                 return;
             }
@@ -403,16 +403,43 @@ class TypingTest {
         }).join('');
     }
 
-    handleBackspace() {
+    handleBackspace(isCtrlPressed) {
         if (this.currentIndex > 0) {
-            this.currentIndex--;
-            
-            if (this.mistakes.has(this.currentIndex)) {
-                this.mistakes.delete(this.currentIndex);
+            if (isCtrlPressed) {
+                // Find the start of the current word
+                let newIndex = this.currentIndex;
+                
+                // Skip any spaces immediately before cursor
+                while (newIndex > 0 && this.currentText[newIndex - 1] === ' ') {
+                    newIndex--;
+                }
+                
+                // Find the start of the word
+                while (newIndex > 0 && this.currentText[newIndex - 1] !== ' ') {
+                    newIndex--;
+                }
+                
+                // Delete all characters between newIndex and currentIndex
+                while (this.currentIndex > newIndex) {
+                    if (this.mistakes.has(this.currentIndex - 1)) {
+                        this.mistakes.delete(this.currentIndex - 1);
+                    } else {
+                        this.correctChars--;
+                    }
+                    this.currentIndex--;
+                    this.totalChars--;
+                }
             } else {
-                this.correctChars--;
+                // Original single character backspace logic
+                this.currentIndex--;
+                
+                if (this.mistakes.has(this.currentIndex)) {
+                    this.mistakes.delete(this.currentIndex);
+                } else {
+                    this.correctChars--;
+                }
+                this.totalChars--;
             }
-            this.totalChars--;
             
             // Update visibleTextStart when backspacing to previous lines
             const newLine = Math.floor(this.currentIndex / this.charsPerLine);
