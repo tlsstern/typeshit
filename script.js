@@ -535,29 +535,32 @@ class TypingTest {
 
         // Handle space key
         if (key === ' ') {
-            if (currentChar === ' ') {
-                // If space is correct, increment correctChars
-                this.correctChars++;
-                this.currentIndex++;
-                this.totalChars++;
-            } else {
-                // Skip to next word if space is pressed at wrong time
-                let nextSpaceIndex = this.currentText.indexOf(' ', this.currentIndex);
-                if (nextSpaceIndex === -1) return;
-                
-                // Mark skipped characters as mistakes
-                while (this.currentIndex < nextSpaceIndex) {
-                    this.mistakes.add(this.currentIndex);
+            // Only allow space if we've typed at least one character and aren't already at a space
+            if (this.currentIndex > 0 && !this.currentText.slice(0, this.currentIndex).endsWith(' ')) {
+                if (currentChar === ' ') {
+                    // If space is correct, increment correctChars
+                    this.correctChars++;
+                    this.currentIndex++;
+                    this.totalChars++;
+                } else {
+                    // Skip to next word if space is pressed at wrong time
+                    let nextSpaceIndex = this.currentText.indexOf(' ', this.currentIndex);
+                    if (nextSpaceIndex === -1) return;
+                    
+                    // Mark skipped characters as mistakes
+                    while (this.currentIndex < nextSpaceIndex) {
+                        this.mistakes.add(this.currentIndex);
+                        this.currentIndex++;
+                        this.totalChars++;
+                    }
+                    // Move past the space
                     this.currentIndex++;
                     this.totalChars++;
                 }
-                // Move past the space
-                this.currentIndex++;
-                this.totalChars++;
+                
+                this.renderText();
+                this.updateStats();
             }
-            
-            this.renderText();
-            this.updateStats();
             return;
         }
 
